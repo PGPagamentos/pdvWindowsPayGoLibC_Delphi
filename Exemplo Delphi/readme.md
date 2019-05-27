@@ -1,25 +1,21 @@
-# Exemplo de integração em Delphi utilizando o framework JNA (Java Native Access) com a biblioteca PGWebLibC da plataforma de transações com cartão PayGo Web
+# Exemplo de integração em Delphi com a biblioteca PGWebLibC da plataforma de transações com cartão PayGo Web
 
 ### Funcionalidades implementadas neste exemplo:
   - Instalação
   - Venda
-  - Cancelamento de transações
+  - 
 
 ### Pré-requisitos
-  - Java - JRE versão 8
-  - Versão do JNA 4.5.2
-  - Windows ou Linux
+  - Delphi 
+  - Windows
   - Cadastro no ambiente de testes/sandbox do PayGo Web
     - código do Ponto de Captura (PdC)
-    - PIN-Pad (Opcional)
+    - PIN-Pad
 
 ### Configurando no Windows
 
-### Configurando no Linux
-
 ### Como executar
 Windows
-Linux
 
 
 #### Observações
