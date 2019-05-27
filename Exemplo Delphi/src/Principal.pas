@@ -52,7 +52,7 @@ type
 
    Constructor Create;             // declaração do metodo construtor
 
-   Destructor  Destroy; Override; // declaração do metodo destrutor
+   Destructor  Destroy; Override; // declaração do metodo  destrutor
 
 
    var
