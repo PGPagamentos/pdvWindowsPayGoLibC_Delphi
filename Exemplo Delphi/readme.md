@@ -1,4 +1,4 @@
-# Exemplo de integração em Java utilizando o framework JNA (Java Native Access) com a biblioteca PGWebLibC da plataforma de transações com cartão PayGo Web
+# Exemplo de integração em Delphi utilizando o framework JNA (Java Native Access) com a biblioteca PGWebLibC da plataforma de transações com cartão PayGo Web
 
 ### Funcionalidades implementadas neste exemplo:
   - Instalação
