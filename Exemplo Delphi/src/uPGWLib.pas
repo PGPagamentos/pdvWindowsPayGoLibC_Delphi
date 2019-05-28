@@ -95,53 +95,49 @@ Type
  // Estrutura para armazenamento de dados para confirmação de transação
  //====================================================================
     TConfirmaData = record
-        szReqNum: Array[0..11] of AnsiChar;
-        szExtRef: Array[0..51] of AnsiChar;
-        szLocRef: Array[0..51] of AnsiChar;
-        szVirtMerch: Array[0..19] of AnsiChar;
-        szAuthSyst: Array[0..21] of AnsiChar;
+        szReqNum: Array[0..10] of AnsiChar;
+        szExtRef: Array[0..50] of AnsiChar;
+        szLocRef: Array[0..50] of AnsiChar;
+        szVirtMerch: Array[0..18] of AnsiChar;
+        szAuthSyst: Array[0..20] of AnsiChar;
     end;
 
    ConfirmaData = Array[0..0] of TConfirmaData;
 
 
-   TConfirmaDataR = record
-       szReqNum: Array[0..11] of AnsiChar;
+{   TConfirmaDataR = record
+       szReqNum: Array[0..10] of AnsiChar;
    end;
-   ConfirmaDataR = Array[0..1] of TConfirmaDataR;
+   ConfirmaDataR = Array[0..0] of TConfirmaDataR;
 
    TConfirmaDataE = record
-        szExtRef: Array[0..51] of AnsiChar;
+        szExtRef: Array[0..50] of AnsiChar;
    end;
-   ConfirmaDataE = Array[0..1] of TConfirmaDataE;
+   ConfirmaDataE = Array[0..0] of TConfirmaDataE;
 
    TConfirmaDataL = record
-        szLocRef: Array[0..51] of AnsiChar;
+        szLocRef: Array[0..50] of AnsiChar;
    end;
-   ConfirmaDataL = Array[0..1] of TConfirmaDataL;
+   ConfirmaDataL = Array[0..0] of TConfirmaDataL;
 
    TConfirmaDataV = record
-        szVirtMerch: Array[0..19] of AnsiChar;
+        szVirtMerch: Array[0..18] of AnsiChar;
    end;
-   ConfirmaDataV = Array[0..1] of TConfirmaDataV;
+   ConfirmaDataV = Array[0..0] of TConfirmaDataV;
 
    TConfirmaDataA = record
-        szAuthSyst: Array[0..21] of AnsiChar;
+        szAuthSyst: Array[0..20] of AnsiChar;
    end;
-   ConfirmaDataA = Array[0..1] of TConfirmaDataA;
-
+   ConfirmaDataA = Array[0..0] of TConfirmaDataA;
+ }
 
 
   TPGWLib = class
-  private
+  //private
     { private declarations }
   protected
     { protected declarations }
   public
-
-    gstConfirmData: ConfirmaData;
-
-
 
 
     constructor Create;
@@ -163,6 +159,8 @@ Type
 
     function ConfirmaTrasacao:integer;
 
+    function GetParamConfirma():Integer;
+
   end;
 
 
@@ -176,6 +174,8 @@ Type
     PWINFO_DESTTCPIP = 'app.tpgw.ntk.com.br:17502';
     PWINFO_USINGPINPAD = '1';
     PWINFO_PPCOMMPORT = '0';
+
+
 
 
 
@@ -345,15 +345,8 @@ Type
                                  de erro pode ser obtida através da função PW_iGetResult (PWINFO_RESULTMSG).
 }
 //=========================================================================================================
-  function PW_iConfirmation(ulResult:Uint32; var szReqNum: ConfirmaDataR; var szLocRef:ConfirmaDataL ; var szExtRef:ConfirmaDataE;
-                                             var szVirtMerch:ConfirmaDataV; var szAuthSyst:ConfirmaDataA):Int16; StdCall; External 'PGWebLib.dll';
-
- // function PW_iConfirmation(ulResult:Uint32; var szReqNum: ConfirmaData; var szLocRef:ConfirmaData ; var szExtRef:ConfirmaData;
- //                                            var szVirtMerch:ConfirmaData; var szAuthSyst:ConfirmaData):Int16; StdCall; External 'PGWebLib.dll';
-
-
- // PW_iConfirmation (Uint32 ulResult, const char* pszReqNum, const char* pszLocRef, const char* pszExtRef,
- //  const char* pszVirtMerch, const char* pszAuthSyst);
+  function PW_iConfirmation(ulResult:Uint32; pszReqNum: AnsiString; pszLocRef:AnsiString ; pszExtRef:AnsiString;
+                                             pszVirtMerch:AnsiString; pszAuthSyst:AnsiString):Int16; StdCall; External 'PGWebLib.dll';
 
 
 //=========================================================================================================*\
@@ -765,19 +758,22 @@ uses Principal;
     vGetdataArray : PW_GetData;
     vstGetData : PW_GetData;
     vGetpszData : PSZ_GetData;
+
     vGetpszDisplay : PSZ_GetDisplay;
-//    gstConfirmDataR: ConfirmaDataR;
    	xNumParam : int16;
     xSzValue: AnsiString;
     pvstParam:PW_GetData;
 
 
-    gstConfirmDataR: ConfirmaDataR;
+    gstConfirmData: ConfirmaData;
+
+
+{    gstConfirmDataR: ConfirmaDataR;
     gstConfirmDataE: ConfirmaDataE;
     gstConfirmDataL: ConfirmaDataL;
     gstConfirmDataV: ConfirmaDataV;
     gstConfirmDataA: ConfirmaDataA;
-
+}
 
 
     iNumParam: Int16;
@@ -789,11 +785,53 @@ uses Principal;
 
 
 
-//==========================================================
+//============================================================================
   {
-    Busca Versão Atual da DLL
+    Busca Parametros para confirmação automatica da Ultima Transação de Venda.
   }
-//==========================================================
+//============================================================================
+function TPGWLib.GetParamConfirma: Integer;
+var
+  I:Integer;
+
+begin
+
+      iRetorno := PW_iGetResult(PWEnums.PWINFO_REQNUM, vGetpszData, SizeOf(vGetpszData));
+      for I := 0 to 10 do
+        begin
+          gstConfirmData[0].szReqNum[I] := vGetpszData[0].pszDataxx[I];
+        end;
+
+      iRetorno := PW_iGetResult(PWEnums.PWINFO_AUTEXTREF, vGetpszData, SizeOf(vGetpszData));
+      for I := 0 to 50 do
+        begin
+          gstConfirmData[0].szExtRef[I] := vGetpszData[0].pszDataxx[I];
+        end;
+
+      iRetorno := PW_iGetResult(PWEnums.PWINFO_AUTLOCREF, vGetpszData, SizeOf(vGetpszData));
+      for I := 0 to 50 do
+        begin
+          gstConfirmData[0].szLocRef[I] := vGetpszData[0].pszDataxx[I];
+        end;
+
+      iRetorno := PW_iGetResult(PWEnums.PWINFO_VIRTMERCH, vGetpszData, SizeOf(vGetpszData));
+      for I := 0 to 18 do
+        begin
+          gstConfirmData[0].szVirtMerch[I] := vGetpszData[0].pszDataxx[I];
+        end;
+
+      iRetorno := PW_iGetResult(PWEnums.PWINFO_AUTHSYST, vGetpszData, SizeOf(vGetpszData));
+      for I := 0 to 20 do
+        begin
+          gstConfirmData[0].szAuthSyst[I] := vGetpszData[0].pszDataxx[I];
+        end;
+
+
+      Result := iRetorno;
+
+
+end;
+
 procedure  TPGWLib.GetVersao();
 var
     iParam : Int16;
@@ -849,29 +887,29 @@ end;
 //=====================================================================================*/
 function TPGWLib.ConfirmaTrasacao: integer;
 var
-  strTagNFCe : string;
+  strTagNFCe : String;
+  strTagOP   : AnsiString;
   falta : string;
   iRet : Integer;
   iRetorno : Integer;
-  ulStatus:UInt32;
+  ulStatus:Integer;
   Menu:Byte;
+  Volta : String;
+  winfo:Integer;
+  I:Integer;
+  iRetI:Integer;
+  Cont:string;
+  tamanho:Integer;
+  passou:Integer;
+  testeNum: Array[0..10] of Char;
 
-
-{  szReqNum: Array[0..11] of AnsiChar;
-  szExtRef: Array[0..51] of AnsiChar;
-  szLocRef: Array[0..51] of AnsiChar;
-  szVirtMerch: Array[0..19] of AnsiChar;
-  szAuthSyst: Array[0..21] of AnsiChar;
-}
-
-//  gstConfirmData: ConfirmaData;
 begin
 
 
 
-    // Confirmação - PW_iConfirmation;
-
   {
+
+      Descrição das Confirmações:
 
    ' 1 - PWCNF_CNF_AUT         A transação foi confirmada pelo Ponto de Captura, sem intervenção do usuário '
    ' 2 - PWCNF_CNF_MANU_AUT    A transação foi confirmada manualmente na Automação
@@ -894,11 +932,6 @@ begin
 
 
 
-
-   // Exit;    // SAINDO AQUI;
-
-
-
    falta :=
    ' 1 - PWCNF_CNF_AUT       '  + chr(13) +
    ' 2 - PWCNF_CNF_MANU_AUT  '  + chr(13) +
@@ -916,18 +949,56 @@ begin
     StrTagNFCe:= vInputBox('Escolha Confirmação: ',falta,'',550,220);
     Menu := StrToInt(strTagNFCe);
 
+
+
     case Menu of
 
          1:
            begin
              ulStatus := PWEnums.PWCNF_CNF_AUTO;
-//             Break;
            end;
 
          2:
            begin
             ulStatus  := PWEnums.PWCNF_CNF_MANU_AUT;
-            //break;
+           end;
+         3:
+           begin
+            ulStatus := PWEnums.PWCNF_REV_MANU_AUT;
+           end;
+         4:
+           begin
+            ulStatus := PWEnums.PWCNF_REV_DISP_AUT;
+           end;
+
+         5:
+           begin
+            ulStatus := PWEnums.PWCNF_REV_DISP_AUT;
+           end;
+
+         6:
+           begin
+            ulStatus := PWEnums.PWCNF_REV_COMM_AUT;
+           end;
+
+         7:
+           begin
+            ulStatus := PWEnums.PWCNF_REV_ABORT;
+           end;
+
+         8:
+           begin
+            ulStatus := PWEnums.PWCNF_REV_OTHER_AUT;
+           end;
+
+         9:
+           begin
+            ulStatus := PWEnums.PWCNF_REV_PWR_AUT;
+           end;
+
+         10:
+           begin
+            ulStatus := PWEnums.PWCNF_REV_FISC_AUT;
            end;
 
 
@@ -935,88 +1006,113 @@ begin
 
 
 
-    ShowMessage('ulStatus: ' + IntToStr(ulStatus));
+     falta := '0 - Confirmar Ultima Transação ' + chr(13) +
+              '1 - Informar Dados Manualmente ';
 
-   // Exit;
+     while (X < 5) do
+     begin
 
+          strTagNFCe:= vInputBox('Escolha Opção: ',falta,'',550,220);
 
-{   iRet = gstHwFuncs.pPW_iConfirmation(ulStatus, gstConfirmData.szReqNum,
-      gstConfirmData.szLocRef, gstConfirmData.szHostRef, gstConfirmData.szVirtMerch,
-      gstConfirmData.szAuthSyst);
-}
-
-   // iRet := PW_iConfirmation(ulStatus,szReqNum,szLocRef,szExtRef,szVirtMerch,szAuthSyst);
-
-    //iRet := PW_iConfirmation(ulStatus, gstConfirmData[0].szReqNum,gstConfirmData[0].szLocRef,gstConfirmData[0].szExtRef,gstConfirmData[0].szVirtMerch,gstConfirmData[0].szAuthSyst);
-
-    iRet := PW_iConfirmation(ulStatus, gstConfirmDataR,gstConfirmDataL,gstConfirmDataE,gstConfirmDataV,gstConfirmDataA);
-
-
-
-    //===============================================
-    // Testa se Biblioteca foi Inicializada - PWInit
-    //===============================================
-     { iRet := TestaInit(iRet);
-      if (iRet <> PWRET_OK) then
-         begin
-           Exit;
-         end;
-     }
+          if  (StrToInt(strTagNFCe) = 0) or (StrToInt(strTagNFCe) = 1)  then
+               begin
+                 Break;
+               end
+          else
+               begin
+                 ShowMessage('Opção Invalida');
+                 Continue
+               end;
 
 
-      iRetorno := PW_iGetResult(PWEnums.PWINFO_RESULTMSG, vGetpszData, SizeOf(vGetpszData));
-
-{      if (iRet = PWEnums.PWRET_OK) then
-          begin
-
-           iRet := PW_iGetResult(PWEnums.PWINFO_RESULTMSG, vGetpszData, SizeOf(vGetpszData));
-
-          end;
-}
+     end;
 
 
 
 
+    if (strTagNFCe = '1') then
+       begin
 
-//    iRet := PW_iConfirmation(ulStatus, gstConfirmData,gstConfirmData,gstConfirmData,gstConfirmData,gstConfirmData);
+          falta := '';
+
+          strTagOP:= vInputBox('Digite valor de PWINFO_REQNUM: ',falta,'',550,220);
+          StrLCopy(@gstConfirmData[0].szReqNum, PChar(strTagOP), SizeOf(gstConfirmData[0].szReqNum));        // 11
+
+          strTagOP:= vInputBox('Digite valor de PWINFO_AUTLOCREF: ',falta,'',550,220);
+          StrLCopy(@gstConfirmData[0].szLocRef, PChar(strTagOP), SizeOf(gstConfirmData[0].szLocRef));      //11
+
+          strTagOP:= vInputBox('Digite valor de PWINFO_AUTEXTREF: ',falta,'',550,220);
+          StrLCopy(@gstConfirmData[0].szExtRef, PChar(strTagOP), SizeOf(gstConfirmData[0].szExtRef));   // 50
+
+          strTagOP:= vInputBox('Digite valor de PWINFO_VIRTMERCH: ',falta,'',550,220);
+          StrLCopy(@gstConfirmData[0].szVirtMerch, PChar(strTagOP), SizeOf(gstConfirmData[0].szVirtMerch));  // 18
+
+          strTagOP:= vInputBox('Digite valor de PWINFO_AUTHSYST: ',falta,'',550,220);
+          StrLCopy(@gstConfirmData[0].szAuthSyst, PChar(strTagOP), SizeOf(gstConfirmData[0].szAuthSyst));  // 20
+
+       end
+    else
+       begin
+         GetParamConfirma();
+       end;
 
 
-    ShowMessage('Fim: ' + IntToStr(ulStatus));
+
+    iRet := PW_iConfirmation(ulStatus, gstConfirmData[0].szReqNum,gstConfirmData[0].szLocRef,gstConfirmData[0].szExtRef,gstConfirmData[0].szVirtMerch,gstConfirmData[0].szAuthSyst);
 
 
-     {
-      case(3):
-         ulStatus = PWCNF_REV_MANU_AUT;
-         break;
+    if (iRet <> PWRET_OK) then
+       begin
 
-      case(4):
-         ulStatus = PWCNF_REV_DISP_AUT;
-         break;
 
-      case(5):
-         ulStatus = PWCNF_REV_DISP_AUT;
-         break;
+          // Verifica se Foi inicializada a biblioteca
+          if (iRet = PWEnums.PWRET_DLLNOTINIT)  then
+              begin
+                  iRetorno := PW_iGetResult(PWEnums.PWINFO_RESULTMSG, vGetpszData, SizeOf(vGetpszData));
+                  Volta := vGetpszData[0].pszDataxx;
+                  if (PPrincipal.Memo1.Visible = False) then
+                     begin
+                       PPrincipal.Memo1.Visible := True;
+                     end;
+                       PPrincipal.Memo1.Lines.Add(Volta);
+                       PPrincipal.Memo1.Lines.Add(' ');
+              end;
 
-      case(6):
-         ulStatus = PWCNF_REV_COMM_AUT;
-         break;
+          // verifica se foi feito instalação
+          if (iRet = PWEnums.PWRET_NOTINST)  then
+              begin
+                  iRetorno := PW_iGetResult(PWEnums.PWINFO_RESULTMSG, vGetpszData, SizeOf(vGetpszData));
+                  Volta := vGetpszData[0].pszDataxx;
+                  if (PPrincipal.Memo1.Visible = False) then
+                     begin
+                       PPrincipal.Memo1.Visible := True;
+                     end;
+                       PPrincipal.Memo1.Lines.Add(Volta);
+                       PPrincipal.Memo1.Lines.Add(' ');
+              end;
 
-      case(7):
-         ulStatus = PWCNF_REV_ABORT;
-         break;
 
-      case(8):
-         ulStatus = PWCNF_REV_OTHER_AUT;
-         break;
+              // Verificar Outros erros
 
-      case(9):
-         ulStatus = PWCNF_REV_PWR_AUT;
-         break;
+              Exit;
 
-      case(10):
-         ulStatus = PWCNF_REV_FISC_AUT;
-         break;
-     }
+       end;
+
+
+
+
+
+    iRetorno := PW_iGetResult(PWEnums.PWINFO_RESULTMSG, vGetpszData, SizeOf(vGetpszData));
+    volta := vGetpszData[0].pszDataxx;
+
+
+
+    if (PPrincipal.Memo1.Visible = False) then
+       begin
+         PPrincipal.Memo1.Visible := True;
+       end;
+      PPrincipal.Memo1.Lines.Add(Volta);
+      PPrincipal.Memo1.Lines.Add(' ');
 
 
 
@@ -1126,10 +1222,6 @@ var
     iRet:Integer;
     iRetErro : integer;
 begin
-
-
-       //  PPrincipal.Memo1.Lines.Clear;
-       //  PPrincipal.Memo1.Visible := False;
 
 
          //===============================================
@@ -1261,17 +1353,14 @@ var
     iParam : Integer;
     Volta : String;
     iRet:Integer;
+    iRetI: Integer;
     iRetErro : integer;
     strNome : String;
     I:Integer;
     xloop:integer;
+    voltaA:AnsiChar;
+
 begin
-
-
-
-//      PPrincipal.Memo1.Lines.Clear;
-//      PPrincipal.Memo1.Visible := False;
-
 
 
         I := 0;
@@ -1307,8 +1396,6 @@ begin
                          end;
                            PPrincipal.Memo1.Lines.Add(Volta);
                            PPrincipal.Memo1.Lines.Add(' ');
-                           //Application.MessageBox(PChar(Volta),'Erro',mb_OK+mb_IconInformation);
-                      //Application.MessageBox(PChar(Volta),'Erro',mb_OK+mb_IconInformation);
                   end;
 
 
@@ -1317,6 +1404,7 @@ begin
                   Exit;
 
            end;
+
 
 
 
@@ -1359,6 +1447,23 @@ begin
               end
             else
               begin
+
+
+
+
+                   // Guardar Informações para Confirmação e Mostrar no finanl da transação:
+
+                      {
+                      GetParamConfirma();
+
+                      ShowMessage('ReqNum: ' + gstConfirmData[0].szReqNum);
+                      ShowMessage('Extref: ' + gstConfirmData[0].szExtRef);
+                      ShowMessage('Locref: ' + gstConfirmData[0].szLocRef);
+                      ShowMessage('VirtMerch: ' + gstConfirmData[0].szVirtMerch);
+                      ShowMessage('AuthSyst: ' + gstConfirmData[0].szAuthSyst);
+                      }
+
+
 
                   if(iRet = PWEnums.PWRET_NOTHING) then
                     begin
@@ -1403,8 +1508,6 @@ var
   Volta : String;
   strNome:string;
   xloop: integer;
-//  j:Integer;
-//  iKey: Integer;
   ulEvent:UInt32;
   x:integer;
 
@@ -1423,10 +1526,6 @@ begin
               while I < iNumParam do
 
                 begin
-
-                     //falta := vstGetData[I].szPrompt;
-
-
 
 
 
