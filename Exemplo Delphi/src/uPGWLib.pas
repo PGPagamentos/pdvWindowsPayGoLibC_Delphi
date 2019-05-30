@@ -155,11 +155,32 @@ Type
 
     function venda:Integer;
 
-    function iExecGetData( vstGetData:PW_GetData; iNumParam:Integer):Integer;
+    function venda02:Integer;
+
+    function iExecGetData(vstGetData:PW_GetData; iNumParam:Integer):Integer;
 
     function ConfirmaTrasacao:integer;
 
-    function GetParamConfirma():Integer;
+    function GetParamConfirma:Integer;
+
+    function GetParamPendenteConfirma:Integer;
+
+    function PrintReturnDescription(iReturnCode:Integer; pszDspMsg:string):Integer;
+
+    function pszGetInfoDescription(wIdentificador:Integer):string;
+
+    function Cancelamento:Integer;
+
+    function Reimpressao:Integer;
+
+    function Relatorios:Integer;
+
+    function Admin:Integer;
+
+    function MandaMemo(Descr:string):integer;
+
+    //function ExecTransac:Integer;
+
 
   end;
 
@@ -758,6 +779,7 @@ uses Principal;
     vGetdataArray : PW_GetData;
     vstGetData : PW_GetData;
     vGetpszData : PSZ_GetData;
+    vGetpszErro : PSZ_GetData;
 
     vGetpszDisplay : PSZ_GetDisplay;
    	xNumParam : int16;
@@ -797,31 +819,31 @@ var
 begin
 
       iRetorno := PW_iGetResult(PWEnums.PWINFO_REQNUM, vGetpszData, SizeOf(vGetpszData));
-      for I := 0 to 10 do
+      for I := 0 to  SizeOf(gstConfirmData[0].szReqNum) do
         begin
           gstConfirmData[0].szReqNum[I] := vGetpszData[0].pszDataxx[I];
         end;
 
       iRetorno := PW_iGetResult(PWEnums.PWINFO_AUTEXTREF, vGetpszData, SizeOf(vGetpszData));
-      for I := 0 to 50 do
+      for I := 0 to SizeOf(gstConfirmData[0].szExtRef) do
         begin
           gstConfirmData[0].szExtRef[I] := vGetpszData[0].pszDataxx[I];
         end;
 
       iRetorno := PW_iGetResult(PWEnums.PWINFO_AUTLOCREF, vGetpszData, SizeOf(vGetpszData));
-      for I := 0 to 50 do
+      for I := 0 to SizeOf(gstConfirmData[0].szLocRef) do
         begin
           gstConfirmData[0].szLocRef[I] := vGetpszData[0].pszDataxx[I];
         end;
 
       iRetorno := PW_iGetResult(PWEnums.PWINFO_VIRTMERCH, vGetpszData, SizeOf(vGetpszData));
-      for I := 0 to 18 do
+      for I := 0 to SizeOf(gstConfirmData[0].szVirtMerch) do
         begin
           gstConfirmData[0].szVirtMerch[I] := vGetpszData[0].pszDataxx[I];
         end;
 
       iRetorno := PW_iGetResult(PWEnums.PWINFO_AUTHSYST, vGetpszData, SizeOf(vGetpszData));
-      for I := 0 to 20 do
+      for I := 0 to SizeOf(gstConfirmData[0].szAuthSyst) do
         begin
           gstConfirmData[0].szAuthSyst[I] := vGetpszData[0].pszDataxx[I];
         end;
@@ -831,6 +853,55 @@ begin
 
 
 end;
+
+
+//============================================================================
+  {
+    Busca Parametros para confirmação automatica da Ultima Transação de Venda.
+  }
+//============================================================================
+function TPGWLib.GetParamPendenteConfirma: Integer;
+var
+  I:Integer;
+
+begin
+
+      iRetorno := PW_iGetResult(PWEnums.PWINFO_PNDREQNUM, vGetpszData, SizeOf(vGetpszData));
+      for I := 0 to  SizeOf(gstConfirmData[0].szReqNum) do
+        begin
+          gstConfirmData[0].szReqNum[I] := vGetpszData[0].pszDataxx[I];
+        end;
+
+      iRetorno := PW_iGetResult(PWEnums.PWINFO_PNDAUTEXTREF, vGetpszData, SizeOf(vGetpszData));
+      for I := 0 to SizeOf(gstConfirmData[0].szExtRef) do
+        begin
+          gstConfirmData[0].szExtRef[I] := vGetpszData[0].pszDataxx[I];
+        end;
+
+      iRetorno := PW_iGetResult(PWEnums.PWINFO_PNDAUTLOCREF, vGetpszData, SizeOf(vGetpszData));
+      for I := 0 to SizeOf(gstConfirmData[0].szLocRef) do
+        begin
+          gstConfirmData[0].szLocRef[I] := vGetpszData[0].pszDataxx[I];
+        end;
+
+      iRetorno := PW_iGetResult(PWEnums.PWINFO_PNDVIRTMERCH, vGetpszData, SizeOf(vGetpszData));
+      for I := 0 to SizeOf(gstConfirmData[0].szVirtMerch) do
+        begin
+          gstConfirmData[0].szVirtMerch[I] := vGetpszData[0].pszDataxx[I];
+        end;
+
+      iRetorno := PW_iGetResult(PWEnums.PWINFO_PNDAUTHSYST, vGetpszData, SizeOf(vGetpszData));
+      for I := 0 to SizeOf(gstConfirmData[0].szAuthSyst) do
+        begin
+          gstConfirmData[0].szAuthSyst[I] := vGetpszData[0].pszDataxx[I];
+        end;
+
+
+      Result := iRetorno;
+
+
+end;
+
 
 procedure  TPGWLib.GetVersao();
 var
@@ -874,6 +945,328 @@ end;
 
 
 { TPGWLib }
+
+
+
+
+//=====================================================================================
+  {
+      Administrativo
+  }
+//=====================================================================================
+function TPGWLib.Admin: Integer;
+  var
+      iParam : Integer;
+      Volta : String;
+      iRet:Integer;
+      iRetI: Integer;
+      iRetErro : integer;
+      strNome : String;
+      I:Integer;
+      xloop:integer;
+      voltaA:AnsiChar;
+begin
+
+
+        I := 0;
+
+        iRet := PW_iNewTransac(PWEnums.PWOPER_ADMIN);
+
+        if (iRet <> PWRET_OK) then
+           begin
+
+
+              // Verifica se Foi inicializada a biblioteca
+              if (iRet = PWEnums.PWRET_DLLNOTINIT)  then
+                  begin
+                      iRetErro := PW_iGetResult(PWEnums.PWINFO_RESULTMSG, vGetpszData, SizeOf(vGetpszData));
+                      Volta := vGetpszData[0].pszDataxx;
+                      if (PPrincipal.Memo1.Visible = False) then
+                         begin
+                           PPrincipal.Memo1.Visible := True;
+                         end;
+                           PPrincipal.Memo1.Lines.Add(Volta);
+                           PPrincipal.Memo1.Lines.Add(' ');
+                           //Application.MessageBox(PChar(Volta),'Erro',mb_OK+mb_IconInformation);
+                  end;
+
+              // verifica se foi feito instalação
+              if (iRet = PWEnums.PWRET_NOTINST)  then
+                  begin
+                      iRetErro := PW_iGetResult(PWEnums.PWINFO_RESULTMSG, vGetpszData, SizeOf(vGetpszData));
+                      Volta := vGetpszData[0].pszDataxx;
+                      if (PPrincipal.Memo1.Visible = False) then
+                         begin
+                           PPrincipal.Memo1.Visible := True;
+                         end;
+                           PPrincipal.Memo1.Lines.Add(Volta);
+                           PPrincipal.Memo1.Lines.Add(' ');
+                  end;
+
+
+                  // Verificar Outros erros
+
+                  Exit;
+
+           end;
+
+
+
+
+        AddMandatoryParams;  // Parametros obrigatórios
+
+
+        //=====================================================
+        //  Loop Para Capturar Dados e executar Transação
+        //=====================================================
+        while I < 100 do
+        begin
+
+            // Coloca o valor 10 (tamanho da estrutura de entrada) no parâmetro iNumParam
+            xNumParam := 10;
+
+
+
+            // Tenta executar a transação
+            if(iRet <> PWEnums.PWRET_NOTHING) then
+              begin
+                //ShowMessage('Processando...');
+              end;
+
+            iRet := PW_iExecTransac(vGetdataArray, @xNumParam);
+            if (iRet = PWEnums.PWRET_MOREDATA) then
+              begin
+
+                 // Tenta capturar os dados faltantes, caso ocorra algum erro retorna
+                 iRetErro := iExecGetData(vGetdataArray,xNumParam);
+                 if (iRetErro <> 0) then
+                    begin
+                      Exit;
+                    end
+                 else
+                    begin
+                      I := I+1;
+                      Continue;
+                    end;
+
+              end
+            else
+              begin
+
+
+                   // Guardar Informações para Confirmação e Mostrar no finanl da transação:
+
+                      {
+                      GetParamConfirma();
+
+                      ShowMessage('ReqNum: ' + gstConfirmData[0].szReqNum);
+                      ShowMessage('Extref: ' + gstConfirmData[0].szExtRef);
+                      ShowMessage('Locref: ' + gstConfirmData[0].szLocRef);
+                      ShowMessage('VirtMerch: ' + gstConfirmData[0].szVirtMerch);
+                      ShowMessage('AuthSyst: ' + gstConfirmData[0].szAuthSyst);
+                      }
+
+
+
+                  if(iRet = PWEnums.PWRET_NOTHING) then
+                    begin
+                      I := I+1;
+                      Continue;
+                    end
+                  else
+                    begin
+                      Break;
+                    end;
+
+              end;
+
+
+        end;
+
+
+end;
+
+
+//=====================================================================================
+  {
+
+      Cancelamento
+
+
+  }
+//=====================================================================================
+function TPGWLib.Cancelamento: Integer;
+  var
+      iParam : Integer;
+      Volta : String;
+      iRet:Integer;
+      iRetI: Integer;
+      iRetErro : integer;
+      strNome : String;
+      I:Integer;
+      xloop:integer;
+      voltaA:AnsiChar;
+
+  begin
+
+        I := 0;
+
+        iRet := PW_iNewTransac(PWEnums.PWOPER_SALEVOID);
+
+        if (iRet <> PWRET_OK) then
+           begin
+
+
+              // Verifica se Foi inicializada a biblioteca
+              if (iRet = PWEnums.PWRET_DLLNOTINIT)  then
+                  begin
+                      iRetErro := PW_iGetResult(PWEnums.PWINFO_RESULTMSG, vGetpszData, SizeOf(vGetpszData));
+                      Volta := vGetpszData[0].pszDataxx;
+                      if (PPrincipal.Memo1.Visible = False) then
+                         begin
+                           PPrincipal.Memo1.Visible := True;
+                         end;
+                           PPrincipal.Memo1.Lines.Add(Volta);
+                           PPrincipal.Memo1.Lines.Add(' ');
+                           //Application.MessageBox(PChar(Volta),'Erro',mb_OK+mb_IconInformation);
+                  end;
+
+              // verifica se foi feito instalação
+              if (iRet = PWEnums.PWRET_NOTINST)  then
+                  begin
+                      iRetErro := PW_iGetResult(PWEnums.PWINFO_RESULTMSG, vGetpszData, SizeOf(vGetpszData));
+                      Volta := vGetpszData[0].pszDataxx;
+                      if (PPrincipal.Memo1.Visible = False) then
+                         begin
+                           PPrincipal.Memo1.Visible := True;
+                         end;
+                           PPrincipal.Memo1.Lines.Add(Volta);
+                           PPrincipal.Memo1.Lines.Add(' ');
+                  end;
+
+
+                  // Verificar Outros erros
+
+                  Exit;
+
+           end;
+
+
+
+
+        AddMandatoryParams;  // Parametros obrigatórios
+
+
+        //=====================================================
+        //  Loop Para Capturar Dados e executar Transação
+        //=====================================================
+        while I < 100 do
+        begin
+
+            // Coloca o valor 10 (tamanho da estrutura de entrada) no parâmetro iNumParam
+            xNumParam := 10;
+
+
+
+            // Tenta executar a transação
+            if(iRet <> PWEnums.PWRET_NOTHING) then
+              begin
+                //ShowMessage('Processando...');
+              end;
+
+            iRet := PW_iExecTransac(vGetdataArray, @xNumParam);
+            if (iRet = PWEnums.PWRET_MOREDATA) then
+              begin
+
+                 // Tenta capturar os dados faltantes, caso ocorra algum erro retorna
+                 iRetErro := iExecGetData(vGetdataArray,xNumParam);
+                 if (iRetErro <> 0) then
+                    begin
+                      Exit;
+                    end
+                 else
+                    begin
+                      I := I+1;
+                      Continue;
+                    end;
+
+              end
+            else
+              begin
+
+                   // Guardar Informações para Confirmação e Mostrar no final da transação:
+                      {
+                      GetParamConfirma();
+
+                      ShowMessage('ReqNum: ' + gstConfirmData[0].szReqNum);
+                      ShowMessage('Extref: ' + gstConfirmData[0].szExtRef);
+                      ShowMessage('Locref: ' + gstConfirmData[0].szLocRef);
+                      ShowMessage('VirtMerch: ' + gstConfirmData[0].szVirtMerch);
+                      ShowMessage('AuthSyst: ' + gstConfirmData[0].szAuthSyst);
+                      }
+
+                  if(iRet = PWEnums.PWRET_NOTHING) then
+                    begin
+                      I := I+1;
+                      Continue;
+                    end;
+
+
+                  if iRet <> PWEnums.PWRET_OK then
+                     begin
+
+                        if (PPrincipal.Memo1.Visible = False) then
+                           begin
+                             PPrincipal.Memo1.Visible := True;
+                           end;
+                             PPrincipal.Memo1.Lines.Add('Erro : ...' + IntToStr(iRet));
+                             PPrincipal.Memo1.Lines.Add(' ');
+
+                             Exit;
+
+                     end;
+
+
+                  if (iRet = PWEnums.PWRET_FROMHOSTPENDTRN) then
+                      begin
+                          // Busca Parametros da Transação Pendente
+                          GetParamPendenteConfirma();
+                      end
+                  else
+                      begin
+                          // Busca Parametros da Transação Atual
+                          GetParamConfirma();
+                      end;
+
+
+                  // Busca necessidade de Confirmação.
+                  iRet := PW_iGetResult(PWEnums.PWINFO_CNFREQ, vGetpszData, SizeOf(vGetpszData));
+                  Volta := vGetpszData[0].pszDataxx;
+                  if (Volta = '1') then
+                     begin
+                        if (PPrincipal.Memo1.Visible = False) then
+                           begin
+                             PPrincipal.Memo1.Visible := True;
+                           end;
+                             PPrincipal.Memo1.Lines.Add(' PWINFO_CNFREQ = 1');
+                             PPrincipal.Memo1.Lines.Add(' ');
+                             PPrincipal.Memo1.Lines.Add('É Necessário Confirmar esta Transação !');
+                             PPrincipal.Memo1.Lines.Add(' ');
+                     end;
+
+
+                     Break;
+
+              end;
+
+
+        end;
+
+
+
+
+  end;
+
 
 
 
@@ -1053,11 +1446,12 @@ begin
        end
     else
        begin
-         GetParamConfirma();
+         // Busca Parametros para Confirmação da Transação
+         // GetParamConfirma();
        end;
 
 
-
+    // Executa Confirmação
     iRet := PW_iConfirmation(ulStatus, gstConfirmData[0].szReqNum,gstConfirmData[0].szLocRef,gstConfirmData[0].szExtRef,gstConfirmData[0].szVirtMerch,gstConfirmData[0].szAuthSyst);
 
 
@@ -1091,6 +1485,9 @@ begin
                        PPrincipal.Memo1.Lines.Add(' ');
               end;
 
+
+
+              ShowMessage('Outros Erros: ' + IntToStr(iRet));
 
               // Verificar Outros erros
 
@@ -1183,11 +1580,17 @@ end;
         StrTagNFCe:= InputBox('Pasta', 'Informe Diretorio:', 'c:\PAYGO');
         iRetornar := PW_iInit(StrTagNFCe);
 
+        MandaMemo(' ');
+        PrintReturnDescription(iretornar,'');
+
         if (iRetornar = PWEnums.PWRET_WRITERR)  then
             begin
                 iRet := PW_iGetResult(PWEnums.PWINFO_RESULTMSG, vGetpszData, SizeOf(vGetpszData));
                 Volta := vGetpszData[0].pszDataxx;
-                Application.MessageBox(PChar(Volta),'Erro',mb_OK+mb_IconInformation);
+                //Application.MessageBox(PChar(Volta),'Erro',mb_OK+mb_IconInformation);
+
+                MandaMemo(Volta);
+
             end;
 
 
@@ -1286,69 +1689,28 @@ begin
 
 end;
 
+
+function TPGWLib.MandaMemo(Descr:string): integer;
+begin
+
+    if (PPrincipal.Memo1.Visible = False) then
+       begin
+         PPrincipal.Memo1.Visible := True;
+       end;
+         PPrincipal.Memo1.Lines.Add(Descr);
+         //PPrincipal.Memo1.Lines.Add(' ');
+
+     Result := 0;
+
+
+end;
+
 //=====================================================================================
   {
-     Função Auxiliar. "não esta sendo usada no momento"
+     Reimpressão
   }
 //======================================================================================
-function tbKeyIsDown(const Key: Integer): Boolean;
-begin
-   Result := GetKeyState(Key) and 128 > 0;
-end;
-
-
-//=====================================================================================*\
-  {
-     function  :  TestaInit
-
-     Descricao  :  Verifica se PW_iInit já foi executado.
-
-     Entradas   :  Resultado da Operação
-
-     Saidas     :  nao ha.
-
-     Retorno    :  Código de resultado da operação.
-
-  }
-//=====================================================================================*/
-function TPGWLib.TestaInit(iparam:Integer): Integer;
-var
-    //iParam : Int16;
-    Volta : String;
-    iRet:Integer;
-begin
-
-     if (iParam = PWEnums.PWRET_DLLNOTINIT)  then
-        begin
-            iRet := PW_iGetResult(PWEnums.PWINFO_RESULTMSG, vGetpszData, SizeOf(vGetpszData));
-            Volta := vGetpszData[0].pszDataxx;
-//            Application.MessageBox(PChar(Volta),'Erro',mb_OK+mb_IconInformation);
-
-            if (PPrincipal.Memo1.Visible = False) then
-               begin
-                 PPrincipal.Memo1.Visible := True;
-               end;
-            PPrincipal.Memo1.Lines.Add(Volta);
-            PPrincipal.Memo1.Lines.Add(' ');
-
-
-            Result := iParam;
-        end
-        else
-        begin
-          Result := PWEnums.PWRET_OK;
-        end;
-
-
-end;
-
-
-//=====================================================
-  {
-      Executa Nova Transaçao de Venda  PWEnums.PWOPER_SALE
-  }
-//=====================================================
-function TPGWLib.venda: Integer;
+function TPGWLib.Reimpressao: Integer;
 var
     iParam : Integer;
     Volta : String;
@@ -1359,13 +1721,11 @@ var
     I:Integer;
     xloop:integer;
     voltaA:AnsiChar;
-
 begin
-
 
         I := 0;
 
-        iRet := PW_iNewTransac(PWEnums.PWOPER_SALE);
+        iRet := PW_iNewTransac(PWEnums.PWOPER_REPRINT);
 
         if (iRet <> PWRET_OK) then
            begin
@@ -1449,20 +1809,128 @@ begin
               begin
 
 
+                  if(iRet = PWEnums.PWRET_NOTHING) then
+                    begin
+                      I := I+1;
+                      Continue;
+                    end
+                  else
+                    begin
+                      Break;
+                    end;
+
+              end;
 
 
-                   // Guardar Informações para Confirmação e Mostrar no finanl da transação:
+        end;
 
-                      {
-                      GetParamConfirma();
 
-                      ShowMessage('ReqNum: ' + gstConfirmData[0].szReqNum);
-                      ShowMessage('Extref: ' + gstConfirmData[0].szExtRef);
-                      ShowMessage('Locref: ' + gstConfirmData[0].szLocRef);
-                      ShowMessage('VirtMerch: ' + gstConfirmData[0].szVirtMerch);
-                      ShowMessage('AuthSyst: ' + gstConfirmData[0].szAuthSyst);
-                      }
+end;
 
+
+//=====================================================================================
+  {
+     Relatórios
+  }
+//======================================================================================
+function TPGWLib.Relatorios: Integer;
+var
+    iParam : Integer;
+    Volta : String;
+    iRet:Integer;
+    iRetI: Integer;
+    iRetErro : integer;
+    strNome : String;
+    I:Integer;
+    xloop:integer;
+    voltaA:AnsiChar;
+begin
+
+
+        I := 0;
+
+        iRet := PW_iNewTransac(PWEnums.PWOPER_RPTDETAIL);
+
+        if (iRet <> PWRET_OK) then
+           begin
+
+
+              // Verifica se Foi inicializada a biblioteca
+              if (iRet = PWEnums.PWRET_DLLNOTINIT)  then
+                  begin
+                      iRetErro := PW_iGetResult(PWEnums.PWINFO_RESULTMSG, vGetpszData, SizeOf(vGetpszData));
+                      Volta := vGetpszData[0].pszDataxx;
+                      if (PPrincipal.Memo1.Visible = False) then
+                         begin
+                           PPrincipal.Memo1.Visible := True;
+                         end;
+                           PPrincipal.Memo1.Lines.Add(Volta);
+                           PPrincipal.Memo1.Lines.Add(' ');
+                           //Application.MessageBox(PChar(Volta),'Erro',mb_OK+mb_IconInformation);
+                  end;
+
+              // verifica se foi feito instalação
+              if (iRet = PWEnums.PWRET_NOTINST)  then
+                  begin
+                      iRetErro := PW_iGetResult(PWEnums.PWINFO_RESULTMSG, vGetpszData, SizeOf(vGetpszData));
+                      Volta := vGetpszData[0].pszDataxx;
+                      if (PPrincipal.Memo1.Visible = False) then
+                         begin
+                           PPrincipal.Memo1.Visible := True;
+                         end;
+                           PPrincipal.Memo1.Lines.Add(Volta);
+                           PPrincipal.Memo1.Lines.Add(' ');
+                  end;
+
+
+                  // Verificar Outros erros
+
+                  Exit;
+
+           end;
+
+
+
+
+        AddMandatoryParams;  // Parametros obrigatórios
+
+
+        //=====================================================
+        //  Loop Para Capturar Dados e executar Transação
+        //=====================================================
+        while I < 100 do
+        begin
+
+            // Coloca o valor 10 (tamanho da estrutura de entrada) no parâmetro iNumParam
+            xNumParam := 10;
+
+
+
+            // Tenta executar a transação
+            if(iRet <> PWEnums.PWRET_NOTHING) then
+              begin
+                //ShowMessage('Processando...');
+              end;
+
+            iRet := PW_iExecTransac(vGetdataArray, @xNumParam);
+            if (iRet = PWEnums.PWRET_MOREDATA) then
+              begin
+
+                 // Tenta capturar os dados faltantes, caso ocorra algum erro retorna
+                 iRetErro := iExecGetData(vGetdataArray,xNumParam);
+                 if (iRetErro <> 0) then
+                    begin
+                      Exit;
+                    end
+                 else
+                    begin
+                      I := I+1;
+                      Continue;
+                    end;
+
+              end
+            else
+              begin
 
 
                   if(iRet = PWEnums.PWRET_NOTHING) then
@@ -1484,6 +1952,457 @@ begin
 
 
 end;
+
+//=====================================================================================
+  {
+     Função Auxiliar. "não esta sendo usada no momento"
+  }
+//======================================================================================
+function tbKeyIsDown(const Key: Integer): Boolean;
+begin
+   Result := GetKeyState(Key) and 128 > 0;
+end;
+
+
+//=====================================================================================*\
+  {
+     function  :  TestaInit
+
+     Descricao  :  Verifica se PW_iInit já foi executado.
+
+     Entradas   :  Resultado da Operação
+
+     Saidas     :  nao ha.
+
+     Retorno    :  Código de resultado da operação.
+
+  }
+//=====================================================================================*/
+function TPGWLib.TestaInit(iparam:Integer): Integer;
+var
+    //iParam : Int16;
+    Volta : String;
+    iRet:Integer;
+begin
+
+     if (iParam = PWEnums.PWRET_DLLNOTINIT)  then
+        begin
+            iRet := PW_iGetResult(PWEnums.PWINFO_RESULTMSG, vGetpszData, SizeOf(vGetpszData));
+            Volta := vGetpszData[0].pszDataxx;
+//            Application.MessageBox(PChar(Volta),'Erro',mb_OK+mb_IconInformation);
+
+            if (PPrincipal.Memo1.Visible = False) then
+               begin
+                 PPrincipal.Memo1.Visible := True;
+               end;
+            PPrincipal.Memo1.Lines.Add(Volta);
+            PPrincipal.Memo1.Lines.Add(' ');
+
+
+            Result := iParam;
+        end
+        else
+        begin
+          Result := PWEnums.PWRET_OK;
+        end;
+
+
+end;
+
+
+//========================================================
+  {
+
+      T E S T E
+
+  }
+//========================================================
+function TPGWLib.venda02: Integer;
+var
+    iParam : Integer;
+    Volta : String;
+    iRet:Integer;
+    iRetI: Integer;
+    iRetErro : integer;
+    strNome : String;
+    I:Integer;
+    xloop:integer;
+    voltaA:AnsiChar;
+
+begin
+
+
+        I := 0;
+
+        iRet := PW_iNewTransac(PWEnums.PWOPER_SALE);
+
+        //iRetErro := PW_iGetResult(PWEnums.PWINFO_SERVERPND, vGetpszErro, SizeOf(vGetpszErro));
+
+       // iRetErro := PW_iGetResult(PWEnums.PWINFO_SERVERPND, vGetpszData, SizeOf(vGetpszData));
+
+
+        if (iRet <> PWRET_OK) then
+           begin
+
+
+              // Verifica se Foi inicializada a biblioteca
+              if (iRet = PWEnums.PWRET_DLLNOTINIT)  then
+                  begin
+                      iRetErro := PW_iGetResult(PWEnums.PWINFO_RESULTMSG, vGetpszData, SizeOf(vGetpszData));
+                      Volta := vGetpszData[0].pszDataxx;
+                      if (PPrincipal.Memo1.Visible = False) then
+                         begin
+                           PPrincipal.Memo1.Visible := True;
+                         end;
+                           PPrincipal.Memo1.Lines.Add(Volta);
+                           PPrincipal.Memo1.Lines.Add(' ');
+                           //Application.MessageBox(PChar(Volta),'Erro',mb_OK+mb_IconInformation);
+                  end;
+
+              // verifica se foi feito instalação
+              if (iRet = PWEnums.PWRET_NOTINST)  then
+                  begin
+                      iRetErro := PW_iGetResult(PWEnums.PWINFO_RESULTMSG, vGetpszData, SizeOf(vGetpszData));
+                      Volta := vGetpszData[0].pszDataxx;
+                      if (PPrincipal.Memo1.Visible = False) then
+                         begin
+                           PPrincipal.Memo1.Visible := True;
+                         end;
+                           PPrincipal.Memo1.Lines.Add(Volta);
+                           PPrincipal.Memo1.Lines.Add(' ');
+                  end;
+
+
+                  // Verificar Outros erros
+
+                  Exit;
+
+           end;
+
+
+
+
+        AddMandatoryParams;  // Parametros obrigatórios
+
+
+        //=====================================================
+        //  Loop Para Capturar Dados e executar Transação
+        //=====================================================
+        while I < 100 do
+        begin
+
+            // Coloca o valor 10 (tamanho da estrutura de entrada) no parâmetro iNumParam
+            xNumParam := 10;
+
+
+
+            // Tenta executar a transação
+            if(iRet <> PWEnums.PWRET_NOTHING) then
+              begin
+                //ShowMessage('Processando...');
+              end;
+
+            iRet := PW_iExecTransac(vGetdataArray, @xNumParam);
+
+
+            MandaMemo(' ');
+            PrintReturnDescription(iRet,'');
+
+
+            if (iRet = PWEnums.PWRET_MOREDATA) then
+              begin
+
+                 MandaMemo('Numero de Parametros Ausentes: ' + IntToStr(xNumParam));
+
+
+                 // Tenta capturar os dados faltantes, caso ocorra algum erro retorna
+                 iRetErro := iExecGetData(vGetdataArray,xNumParam);
+                 if (iRetErro <> 0) then
+                    begin
+                      Exit;
+                    end
+                 else
+                    begin
+                      I := I+1;
+                      Continue;
+                    end;
+
+              end
+            else
+              begin
+
+
+
+
+
+                  if(iRet = PWEnums.PWRET_NOTHING) then
+                    begin
+                      I := I+1;
+                      Continue;
+                    end;
+
+
+                  if (iRet = PWEnums.PWRET_FROMHOSTPENDTRN) then
+                      begin
+                          // Busca Parametros da Transação Pendente
+                          GetParamPendenteConfirma();
+
+                          //ShowMessage('Parametros Pendentes');
+
+                          {ShowMessage('ReqNum: ' + gstConfirmData[0].szReqNum);
+                          ShowMessage('Extref: ' + gstConfirmData[0].szExtRef);
+                          ShowMessage('Locref: ' + gstConfirmData[0].szLocRef);
+                          ShowMessage('VirtMerch: ' + gstConfirmData[0].szVirtMerch);
+                          ShowMessage('AuthSyst: ' + gstConfirmData[0].szAuthSyst);
+                          }
+                      end
+                  else
+                      begin
+                          // Busca Parametros da Transação Atual
+                          GetParamConfirma();
+                          //ShowMessage('Parametros Atuais');
+                      end;
+
+                  iRet := PW_iGetResult(PWEnums.PWINFO_CNFREQ, vGetpszData, SizeOf(vGetpszData));
+                  Volta := vGetpszData[0].pszDataxx;
+                  if (Volta = '1') then
+                     begin
+                        if (PPrincipal.Memo1.Visible = False) then
+                           begin
+                             PPrincipal.Memo1.Visible := True;
+                           end;
+                             PPrincipal.Memo1.Lines.Add(' PWINFO_CNFREQ = 1');
+                             PPrincipal.Memo1.Lines.Add(' ');
+                             PPrincipal.Memo1.Lines.Add('É Necessário Confirmar esta Transação !');
+                             PPrincipal.Memo1.Lines.Add(' ');
+                     end;
+
+
+                  Break;
+
+
+              end;
+
+
+        end;
+
+
+
+
+end;
+
+
+
+
+//========================================================
+  {
+     Executa Nova Transaçao de Venda  PWEnums.PWOPER_SALE
+  }
+//========================================================
+function TPGWLib.venda: Integer;
+var
+    iParam : Integer;
+    Volta : String;
+    iRet:Integer;
+    iRetI: Integer;
+    iRetErro : integer;
+    strNome : String;
+    I:Integer;
+    xloop:integer;
+    voltaA:AnsiChar;
+
+begin
+
+
+        I := 0;
+
+        iRet := PW_iNewTransac(PWEnums.PWOPER_SALE);
+
+        //iRetErro := PW_iGetResult(PWEnums.PWINFO_SERVERPND, vGetpszErro, SizeOf(vGetpszErro));
+
+       // iRetErro := PW_iGetResult(PWEnums.PWINFO_SERVERPND, vGetpszData, SizeOf(vGetpszData));
+
+
+        if (iRet <> PWRET_OK) then
+           begin
+
+
+              // Verifica se Foi inicializada a biblioteca
+              if (iRet = PWEnums.PWRET_DLLNOTINIT)  then
+                  begin
+                      iRetErro := PW_iGetResult(PWEnums.PWINFO_RESULTMSG, vGetpszData, SizeOf(vGetpszData));
+                      Volta := vGetpszData[0].pszDataxx;
+                      if (PPrincipal.Memo1.Visible = False) then
+                         begin
+                           PPrincipal.Memo1.Visible := True;
+                         end;
+                           PPrincipal.Memo1.Lines.Add(Volta);
+                           PPrincipal.Memo1.Lines.Add(' ');
+                           //Application.MessageBox(PChar(Volta),'Erro',mb_OK+mb_IconInformation);
+                  end;
+
+              // verifica se foi feito instalação
+              if (iRet = PWEnums.PWRET_NOTINST)  then
+                  begin
+                      iRetErro := PW_iGetResult(PWEnums.PWINFO_RESULTMSG, vGetpszData, SizeOf(vGetpszData));
+                      Volta := vGetpszData[0].pszDataxx;
+                      if (PPrincipal.Memo1.Visible = False) then
+                         begin
+                           PPrincipal.Memo1.Visible := True;
+                         end;
+                           PPrincipal.Memo1.Lines.Add(Volta);
+                           PPrincipal.Memo1.Lines.Add(' ');
+                  end;
+
+
+                  // Verificar Outros erros
+
+                  Exit;
+
+           end;
+
+
+
+
+
+        {iRet := PW_iGetResult(PWEnums.PWINFO_SERVERPND, vGetpszData, SizeOf(vGetpszData));
+        if (iRet = 1) then
+            begin
+              showmessage('Possui Transação Pendente: ');
+              Exit;
+            end
+        else
+            begin
+              showmessage('Não Possui Transações Pendentes: ');
+              Exit;
+            end;
+        }
+
+
+        AddMandatoryParams;  // Parametros obrigatórios
+
+
+        //=====================================================
+        //  Loop Para Capturar Dados e executar Transação
+        //=====================================================
+        while I < 100 do
+        begin
+
+            // Coloca o valor 10 (tamanho da estrutura de entrada) no parâmetro iNumParam
+            xNumParam := 10;
+
+
+
+            // Tenta executar a transação
+            if(iRet <> PWEnums.PWRET_NOTHING) then
+              begin
+                //ShowMessage('Processando...');
+              end;
+
+            iRet := PW_iExecTransac(vGetdataArray, @xNumParam);
+
+            //iRetErro := PW_iGetResult(PWEnums.PWINFO_SERVERPND, vGetpszErro, SizeOf(vGetpszErro));
+
+            // PrintReturnDescription(iRet,'');
+
+
+            if (iRet = PWEnums.PWRET_MOREDATA) then
+              begin
+
+                 // Tenta capturar os dados faltantes, caso ocorra algum erro retorna
+                 iRetErro := iExecGetData(vGetdataArray,xNumParam);
+                 if (iRetErro <> 0) then
+                    begin
+                      Exit;
+                    end
+                 else
+                    begin
+                      I := I+1;
+                      Continue;
+                    end;
+
+              end
+            else
+              begin
+
+
+
+
+                   // Guardar Informações para Confirmação e Mostrar no finanl da transação:
+
+                      {GetParamConfirma();
+
+                      ShowMessage('ReqNum: ' + gstConfirmData[0].szReqNum);
+                      ShowMessage('Extref: ' + gstConfirmData[0].szExtRef);
+                      ShowMessage('Locref: ' + gstConfirmData[0].szLocRef);
+                      ShowMessage('VirtMerch: ' + gstConfirmData[0].szVirtMerch);
+                      ShowMessage('AuthSyst: ' + gstConfirmData[0].szAuthSyst);
+                      }
+
+
+
+                  if(iRet = PWEnums.PWRET_NOTHING) then
+                    begin
+                      I := I+1;
+                      Continue;
+                    end;
+                 // else
+                 //   begin
+                 //     Break;
+                 //   end;
+
+
+                  if (iRet = PWEnums.PWRET_FROMHOSTPENDTRN) then
+                      begin
+                          // Busca Parametros da Transação Pendente
+                          GetParamPendenteConfirma();
+
+                          //ShowMessage('Parametros Pendentes');
+
+                          {ShowMessage('ReqNum: ' + gstConfirmData[0].szReqNum);
+                          ShowMessage('Extref: ' + gstConfirmData[0].szExtRef);
+                          ShowMessage('Locref: ' + gstConfirmData[0].szLocRef);
+                          ShowMessage('VirtMerch: ' + gstConfirmData[0].szVirtMerch);
+                          ShowMessage('AuthSyst: ' + gstConfirmData[0].szAuthSyst);
+                          }
+                      end
+                  else
+                      begin
+                          // Busca Parametros da Transação Atual
+                          GetParamConfirma();
+                          //ShowMessage('Parametros Atuais');
+                      end;
+
+                  iRet := PW_iGetResult(PWEnums.PWINFO_CNFREQ, vGetpszData, SizeOf(vGetpszData));
+                  Volta := vGetpszData[0].pszDataxx;
+                  if (Volta = '1') then
+                     begin
+                        if (PPrincipal.Memo1.Visible = False) then
+                           begin
+                             PPrincipal.Memo1.Visible := True;
+                           end;
+                             PPrincipal.Memo1.Lines.Add(' PWINFO_CNFREQ = 1');
+                             PPrincipal.Memo1.Lines.Add(' ');
+                             PPrincipal.Memo1.Lines.Add('É Necessário Confirmar esta Transação !');
+                             PPrincipal.Memo1.Lines.Add(' ');
+                     end;
+
+
+                  Break;
+
+
+              end;
+
+
+        end;
+
+
+
+
+end;
+
+
+
 
 //=====================================================================================*\
   { Funcao     :  iExecGetData
@@ -1510,6 +2429,7 @@ var
   xloop: integer;
   ulEvent:UInt32;
   x:integer;
+  iRetStr: string;
 
 begin
 
@@ -1527,9 +2447,12 @@ begin
 
                 begin
 
-
+                     // Imprime na tela qual informação está sendo capturada
+                     iRetStr := pszGetInfoDescription(vstGetData[I].wIdentificador);
+                     MandaMemo('dado a Capturar: ' + iRetStr + ' ' + IntToStr(vstGetData[I].wIdentificador));
 
                      case (vstGetData[I].bTipoDeDado) of
+
 
                        // Dados de Menu
 
@@ -1537,7 +2460,8 @@ begin
 
                              begin
 
-
+                                MandaMemo('Tipo de dados = MENU');
+                                MandaMemo(vstGetData[i].szPrompt);
 
                                  falta := vstGetData[I].szPrompt + chr(13);
                                  falta := falta + ' ' + chr(13);
@@ -1553,10 +2477,37 @@ begin
                                      end;
 
 
+                                 x := 0;
 
-                                 strNome := vInputBox('Selecione Opção', falta, '',550,340);
-                                 // Busca Código Referente em vszValorMenu
-                                 strNome := vstGetData[I].vszValorMenu[StrToInt(strNome)];
+                                 strNome := '';
+
+                                 while (X < 5) do
+                                     begin
+                                       strNome := vInputBox('Selecione Opção', falta, '',550,340);
+
+
+                                       try
+                                          iRetErro := StrToInt(strNome);
+                                       Except
+                                          ShowMessage('Escolha uma opção Válida');
+                                          Continue;
+                                       end;
+
+                                       if (StrToInt(strNome) > (vstGetData[I].bNumOpcoesMenu - 1)) then
+                                           begin
+                                             ShowMessage('Opção Inexistente');
+                                             Continue;
+                                           end;
+
+                                        // Busca Código Referente em vszValorMenu
+                                        strNome := vstGetData[I].vszValorMenu[StrToInt(strNome)];
+
+                                        Break;
+
+                                     end;
+
+
+
                                  iRet := PW_iAddParam(vstGetData[I].wIdentificador,strNome);
                                  if (iRet = PWEnums.PWRET_OK) then
                                     begin
@@ -1578,6 +2529,13 @@ begin
                        PWEnums.PWDAT_TYPED:
                              begin
 
+                               MandaMemo('Tipo de dados = DIGITADO');
+                               MandaMemo(vstGetData[i].szPrompt);
+                               MandaMemo('Tamanho Minimo: ' + IntToStr(vstGetData[I].bTamanhoMinimo));
+                               MandaMemo('Tamanho Maximo: ' + IntToStr(vstGetData[I].bTamanhoMaximo));
+                               iRetStr := vstGetData[I].szValorInicial;
+                               MandaMemo('Valor Atual: ' + iRetStr);
+
 
                                falta := vstGetData[I].szPrompt;
 
@@ -1586,6 +2544,7 @@ begin
                                while (X < 5) do
                                    begin
 
+                                       //ShowMessage('Mascara: ' + vstGetData[I].szMascaraDeCaptura);
                                        StrTagNFCe:= vInputBox('Informar: ',falta,'',550,340);
 
                                        if (Length(StrTagNFCe) > vstGetData[I].bTamanhoMaximo) then
@@ -1600,7 +2559,7 @@ begin
                                               Continue;
                                           end;
 
-                                       if (vstGetData[I].bValidacaoDado = 1) then
+                                      { if (vstGetData[I].bValidacaoDado = 1) then
                                           begin
                                            if (StrToIntDef(StrTagNFCe,0) = 0) then
                                               begin
@@ -1608,7 +2567,7 @@ begin
                                                 Continue;
                                               end;
                                           end;
-
+                                       }
 
                                           iRet := PW_iAddParam(vstGetData[I].wIdentificador,StrTagNFCe);
                                           if (iRet <> 0) then
@@ -1638,6 +2597,9 @@ begin
 
                        PWEnums.PWDAT_CARDINF:
                              begin
+
+                             MandaMemo('Tipo de dados = DADOS DO CARTAO');
+                             //MandaMemo(vstGetData[i].szPrompt);
 
                              if(vstGetData[I].ulTipoEntradaCartao = 1) then
                                begin
@@ -1699,6 +2661,8 @@ begin
                             PWEnums.PWDAT_PPREMCRD:
                               begin
 
+                                 MandaMemo('Tipo de dados = PWDAT_PPREMCRD');
+
                                  iRet := PW_iPPRemoveCard();
 
                                  if (iRet <> PWRET_OK) then
@@ -1751,6 +2715,7 @@ begin
                             PWEnums.PWDAT_PPENCPIN:
                                begin
 
+                                 MandaMemo('Tipo de dados = SENHA');
 
                                  iRet := PW_iPPGetPIN(I);
                                  if (iRet <> PWRET_OK) then
@@ -1810,6 +2775,8 @@ begin
                             PWEnums.pWDAT_CARDOFF:
 
                                 begin
+
+                                 MandaMemo('Tipo de dados = CHIP OFFLINE');
 
 
                                  iRet := PW_iPPGoOnChip(I);
@@ -1872,6 +2839,8 @@ begin
                                 PWEnums.PWDAT_PPENTRY:
                                   begin
 
+                                     MandaMemo('Tipo de dados = DADO DIGITADO NO PINPAD');
+
                                      iRet := PW_iPPGetData(I);
 
                                      if (iRet <> PWRET_OK) then
@@ -1929,6 +2898,9 @@ begin
 
                                   PWEnums.PWDAT_CARDONL:
                                     begin
+
+                                       MandaMemo('Tipo de dados = CHIP ONLINE');
+
 
                                        iRet := PW_iPPFinishChip(I);
 
@@ -1992,6 +2964,7 @@ begin
                                   PWEnums.PWDAT_PPCONF:
                                   begin
 
+                                       MandaMemo('Tipo de dados = CONFIRMA DADO');
 
                                        iRet := PW_iPPConfirmData(I);
 
@@ -2084,6 +3057,257 @@ begin
 
           end;
 
+
+
+
+
+
+//=====================================================================================*\
+  {
+   Funcao     :  PrintReturnDescription
+
+   Descricao  :  Esta função recebe um código PWRET_XXX e imprime na tela a sua descrição.
+
+   Entradas   :  iResult :   Código de resultado da transação (PWRET_XXX).
+
+   Saidas     :  nao ha.
+
+   Retorno    :  nao ha.
+  }
+//=====================================================================================*/
+  function TPGWLib.PrintReturnDescription(iReturnCode:Integer; pszDspMsg:string):Integer;
+  var
+    I : integer;
+  begin
+
+       case iReturnCode of
+
+
+         PWEnums.PWRET_OK:
+           begin
+            MandaMemo('PWRET_OK');
+           end;
+
+         PWEnums.PWRET_INVCALL:
+           begin
+            MandaMemo('PWRET_INVCALL');
+           end;
+
+         PWEnums.PWRET_INVPARAM:
+           begin
+            MandaMemo('PWRET_INVPARAM');
+           end;
+
+         PWEnums.PWRET_NODATA:
+           begin
+            MandaMemo('PWRET_NODATA');
+           end;
+
+         PWEnums.PWRET_BUFOVFLW:
+           begin
+            MandaMemo('PWRET_BUFOVFLW');
+           end;
+
+         PWEnums.PWRET_MOREDATA:
+           begin
+            MandaMemo('PWRET_MOREDATA');
+           end;
+
+         PWEnums.PWRET_DLLNOTINIT:
+           begin
+            MandaMemo('PWRET_DLLNOTINIT');
+           end;
+
+         PWEnums.PWRET_NOTINST:
+           begin
+            MandaMemo('PWRET_NOTINST');
+           end;
+
+         PWEnums.PWRET_TRNNOTINIT:
+           begin
+            MandaMemo('PWRET_TRNNOTINIT');
+           end;
+
+         PWEnums.PWRET_NOMANDATORY:
+           begin
+            MandaMemo('PWRET_NOMANDATORY');
+           end;
+
+         PWEnums.PWRET_TIMEOUT:
+           begin
+            MandaMemo('PWRET_TIMEOUT');
+           end;
+
+         PWEnums.PWRET_CANCEL:
+           begin
+            MandaMemo('PWRET_CANCEL');
+           end;
+
+         PWEnums.PWRET_FALLBACK:
+           begin
+            MandaMemo('PWRET_FALLBACK');
+           end;
+
+         PWEnums.PWRET_DISPLAY:
+           begin
+            MandaMemo('PWRET_DISPLAY');
+           end;
+         //printf("\nRetorno = PWRET_DISPLAY");
+         //InputCR(pszDspMsg);
+         //printf("\n%s", pszDspMsg);
+
+         PWEnums.PWRET_NOTHING:
+           begin
+            MandaMemo('PWRET_NOTHING');
+           end;
+
+         PWEnums.PWRET_FROMHOST:
+         //printf("\nRetorno = ERRO DO HOST");
+           begin
+            MandaMemo('PWRET_FROMHOST');
+           end;
+
+         PWEnums.PWRET_SSLCERTERR:
+           begin
+            MandaMemo('PWRET_SSLCERTERR');
+           end;
+
+         PWEnums.PWRET_SSLNCONN:
+           begin
+            MandaMemo('PWRET_SSLNCONN');
+           end;
+
+         PWEnums.PWRET_FROMHOSTPENDTRN:
+           begin
+            MandaMemo('PWRET_FROMHOSTPENDTRN');
+           end;
+
+      else
+
+         begin
+          //printf("\nRetorno = OUTRO ERRO <%d>", iReturnCode);
+           begin
+            MandaMemo('OUTRO ERRO: ' + IntToStr(iReturnCode));
+           end;
+
+         end;
+
+
+
+         if(iReturnCode <> PWEnums.PWRET_MOREDATA) and (iReturnCode <> PWEnums.PWRET_DISPLAY) and
+             (iReturnCode <> PWEnums.PWRET_NOTHING) and (iReturnCode <> PWEnums.PWRET_FALLBACK) then
+            begin
+              //PrintResultParams();
+            end;
+
+
+
+
+       end;
+
+
+
+  end;
+
+
+
+
+//=====================================================================================*\
+  {
+   Funcao     :  pszGetInfoDescription
+
+   Descricao  :  Esta função recebe um código PWINFO_XXX e retorna uma string com a
+                 descrição da informação representada por aquele código.
+
+   Entradas   :  wIdentificador :  Código da informação (PWINFO_XXX).
+
+   Saidas     :  nao ha.
+
+   Retorno    :  String representando o código recebido como parâmetro.
+  }
+//=====================================================================================*/
+  function TPGWLib.pszGetInfoDescription(wIdentificador:Integer):string;
+  begin
+
+       case wIdentificador of
+
+        PWEnums.PWINFO_OPERATION:  Result := 'PWINFO_OPERATION';
+
+        PWEnums.PWINFO_POSID            :  Result := 'PWINFO_POSID';
+        PWEnums.PWINFO_AUTNAME          :  Result := 'PWINFO_AUTNAME';
+        PWEnums.PWINFO_AUTVER           :  Result := 'PWINFO_AUTVER';
+        PWEnums.PWINFO_AUTDEV           :  Result := 'PWINFO_AUTDEV';
+        PWEnums.PWINFO_DESTTCPIP        : Result := 'PWINFO_DESTTCPIP';
+        PWEnums.PWINFO_MERCHCNPJCPF     : Result := 'PWINFO_MERCHCNPJCPF';
+        PWEnums.PWINFO_AUTCAP           : Result := 'PWINFO_AUTCAP';
+        PWEnums.PWINFO_TOTAMNT          : Result := 'PWINFO_TOTAMNT';
+        PWEnums.PWINFO_CURRENCY         : Result := 'PWINFO_CURRENCY';
+        PWEnums.PWINFO_CURREXP          : Result := 'PWINFO_CURREXP';
+        PWEnums.PWINFO_FISCALREF        : Result := 'PWINFO_FISCALREF';
+        PWEnums.PWINFO_CARDTYPE         : Result := 'PWINFO_CARDTYPE';
+        PWEnums.PWINFO_PRODUCTNAME      : Result := 'PWINFO_PRODUCTNAME';
+        PWEnums.PWINFO_DATETIME         : Result := 'PWINFO_DATETIME';
+        PWEnums.PWINFO_REQNUM           : Result := 'PWINFO_REQNUM';
+        PWEnums.PWINFO_AUTHSYST         : Result := 'PWINFO_AUTHSYST';
+        PWEnums.PWINFO_VIRTMERCH        : Result := 'PWINFO_VIRTMERCH';
+        PWEnums.PWINFO_AUTMERCHID       : Result := 'PWINFO_AUTMERCHID';
+        PWEnums.PWINFO_PHONEFULLNO      : Result := 'PWINFO_PHONEFULLNO';
+        PWEnums.PWINFO_FINTYPE          : Result := 'PWINFO_FINTYPE';
+        PWEnums.PWINFO_INSTALLMENTS     : Result := 'PWINFO_INSTALLMENTS';
+        PWEnums.PWINFO_INSTALLMDATE     : Result := 'PWINFO_INSTALLMDATE';
+        PWEnums.PWINFO_PRODUCTID        : Result := 'PWINFO_PRODUCTID';
+        PWEnums.PWINFO_RESULTMSG        : Result := 'PWINFO_RESULTMSG';
+        PWEnums.PWINFO_CNFREQ           : Result := 'PWINFO_CNFREQ';
+        PWEnums.PWINFO_AUTLOCREF        : Result := 'PWINFO_AUTLOCREF';
+        PWEnums.PWINFO_AUTEXTREF        : Result := 'PWINFO_AUTEXTREF';
+        PWEnums.PWINFO_AUTHCODE         : Result := 'PWINFO_AUTHCODE';
+        PWEnums.PWINFO_AUTRESPCODE      : Result := 'PWINFO_AUTRESPCODE';
+        PWEnums.PWINFO_DISCOUNTAMT      : Result := 'PWINFO_DISCOUNTAMT';
+        PWEnums.PWINFO_CASHBACKAMT      : Result := 'PWINFO_CASHBACKAMT';
+        PWEnums.PWINFO_CARDNAME         : Result := 'PWINFO_CARDNAME';
+        PWEnums.PWINFO_ONOFF            : Result := 'PWINFO_ONOFF';
+        PWEnums.PWINFO_BOARDINGTAX      : Result := 'PWINFO_BOARDINGTAX';
+        PWEnums.PWINFO_TIPAMOUNT        : Result := 'PWINFO_TIPAMOUNT';
+        PWEnums.PWINFO_INSTALLM1AMT     : Result := 'PWINFO_INSTALLM1AMT';
+        PWEnums.PWINFO_INSTALLMAMNT     : Result := 'PWINFO_INSTALLMAMNT';
+        PWEnums.PWINFO_RCPTFULL         : Result := 'PWINFO_RCPTFULL';
+        PWEnums.PWINFO_RCPTMERCH        : Result := 'PWINFO_RCPTMERCH';
+        PWEnums.PWINFO_RCPTCHOLDER      : Result := 'PWINFO_RCPTCHOLDER';
+        //Enums.PWEnums.PWINFO_RCPTCHSHORT      : Result := 'PWINFO_RCPTCHSHORT';
+        PWEnums.PWINFO_TRNORIGDATE      : Result := 'PWINFO_TRNORIGDATE';
+        PWEnums.PWINFO_TRNORIGNSU       : Result := 'PWINFO_TRNORIGNSU';
+        PWEnums.PWINFO_TRNORIGAMNT      : Result := 'PWINFO_TRNORIGAMNT';
+        PWEnums.PWINFO_TRNORIGAUTH      : Result := 'PWINFO_TRNORIGAUTH';
+        PWEnums.PWINFO_TRNORIGREQNUM    : Result := 'PWINFO_TRNORIGREQNUM';
+        PWEnums.PWINFO_TRNORIGTIME      : Result := 'PWINFO_TRNORIGTIME';
+        PWEnums.PWINFO_CARDFULLPAN      : Result := 'PWINFO_CARDFULLPAN';
+        PWEnums.PWINFO_CARDEXPDATE      : Result := 'PWINFO_CARDEXPDATE';
+        //PWEnums.PWINFO_CARDNAMESTD      : Result := 'PWINFO_CARDNAMESTD';
+        PWEnums.PWINFO_CARDPARCPAN      : Result := 'PWINFO_CARDPARCPAN';
+        PWEnums.PWINFO_BARCODENTMODE    : Result := 'PWINFO_BARCODENTMODE';
+        PWEnums.PWINFO_BARCODE          : Result := 'PWINFO_BARCODE';
+        PWEnums.PWINFO_MERCHADDDATA1    : Result := 'PWINFO_MERCHADDDATA1';
+        PWEnums.PWINFO_MERCHADDDATA2    : Result := 'PWINFO_MERCHADDDATA2';
+        PWEnums.PWINFO_MERCHADDDATA3    : Result := 'PWINFO_MERCHADDDATA3';
+        PWEnums.PWINFO_MERCHADDDATA4    : Result := 'PWINFO_MERCHADDDATA4';
+        PWEnums.PWINFO_PAYMNTTYPE       : Result := 'PWINFO_PAYMNTTYPE';
+        PWEnums.PWINFO_USINGPINPAD      : Result := 'PWINFO_USINGPINPAD';
+        PWEnums.PWINFO_PPCOMMPORT       : Result := 'PWINFO_PPCOMMPORT';
+        PWEnums.PWINFO_IDLEPROCTIME     : Result := 'PWINFO_IDLEPROCTIME';
+        PWEnums.PWINFO_PNDAUTHSYST		  : Result := 'PWINFO_PNDAUTHSYST';
+        PWEnums.PWINFO_PNDVIRTMERCH     : Result := 'PWINFO_PNDVIRTMERCH';
+        PWEnums.PWINFO_PNDREQNUM        : Result := 'PWINFO_PNDREQNUM';
+        PWEnums.PWINFO_PNDAUTLOCREF     : Result := 'PWINFO_PNDAUTLOCREF';
+        PWEnums.PWINFO_PNDAUTEXTREF     : Result := 'PWINFO_PNDAUTEXTREF';
+        else
+        begin
+          Result := 'PWINFO_XXX';
+        end;
+
+      end;
+
+
+      end;
 
 
 

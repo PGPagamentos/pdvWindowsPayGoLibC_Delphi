@@ -6,17 +6,13 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, System.StrUtils, system.AnsiStrings,
   Vcl.Graphics,Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, System.Types, System.TypInfo,uEnums,
-  Vcl.ExtCtrls, uLib, uPGWLib;
+  Vcl.ExtCtrls, uLib, uPGWLib, Vcl.Menus;
 
 type
 
 
 
   TPrincipal = class(TForm)
-    Button2: TButton;
-    Button3: TButton;
-    Button4: TButton;
-    Button5: TButton;
     Label1: TLabel;
     Panel1: TPanel;
     Label2: TLabel;
@@ -24,14 +20,37 @@ type
     Label4: TLabel;
     Label5: TLabel;
     Memo1: TMemo;
-    Button1: TButton;
-    procedure Button2Click(Sender: TObject);
-    procedure Button3Click(Sender: TObject);
-    procedure Button5Click(Sender: TObject);
+    MainMenu1: TMainMenu;
+    Operaes1: TMenuItem;
+    PWiInit1: TMenuItem;
+    PWiNewTransac1: TMenuItem;
+    PWOPERINSTALL1: TMenuItem;
+    PWOPERSALEVenda1: TMenuItem;
+    PWiConfirmation1: TMenuItem;
+    PWOPERSALEVOIDCancelamento1: TMenuItem;
+    PWOPERVERSIONVersodaDLL1: TMenuItem;
+    N1: TMenuItem;
+    N2: TMenuItem;
+    N3: TMenuItem;
+    N4: TMenuItem;
+    N5: TMenuItem;
+    N6: TMenuItem;
+    N5PWOPERREPRINTReimpresso1: TMenuItem;
+    N7: TMenuItem;
+    PWOPERRPTDETAIL1: TMenuItem;
+    N8: TMenuItem;
+    N7PWOPERADMIN1: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure FormKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
-    procedure Button4Click(Sender: TObject);
-    procedure Button1Click(Sender: TObject);
+    procedure PWiInit1Click(Sender: TObject);
+    procedure PWOPERINSTALL1Click(Sender: TObject);
+    procedure PWOPERSALEVenda1Click(Sender: TObject);
+    procedure PWiConfirmation1Click(Sender: TObject);
+    procedure PWOPERSALEVOIDCancelamento1Click(Sender: TObject);
+    procedure PWOPERVERSIONVersodaDLL1Click(Sender: TObject);
+    procedure N5PWOPERREPRINTReimpresso1Click(Sender: TObject);
+    procedure PWOPERRPTDETAIL1Click(Sender: TObject);
+    procedure N7PWOPERADMIN1Click(Sender: TObject);
 
 
 
@@ -52,7 +71,7 @@ type
 
    Constructor Create;             // declaração do metodo construtor
 
-   Destructor  Destroy; Override; // declaração do metodo  destrutor
+   Destructor  Destroy; Override; // declaração do metodo destrutor
 
 
    var
@@ -83,49 +102,6 @@ implementation
 
 {$R *.dfm}
 
-
-procedure TPrincipal.Button1Click(Sender: TObject);
-begin
-
-//   PGWLib.ConfirmaTrasacao();
-
-end;
-
-procedure TPrincipal.Button2Click(Sender: TObject);
-begin
-
-    // versão atual da DLL
-    PGWLib.GetVersao();
-
-end;
-
-procedure TPrincipal.Button3Click(Sender: TObject);
-begin
-
-    // Instalar Ponto de Captura
-    PGWLib.Instalacao();
-
-end;
-
-
-
-
-procedure TPrincipal.Button4Click(Sender: TObject);
-begin
-
-    // Transação de Venda
-    PGWLib.venda();
-
-end;
-
-
-procedure TPrincipal.Button5Click(Sender: TObject);
-begin
-
-      // Inicializar Lib
-      PGWLib.Init();
-
-end;
 
 constructor TPrincipal.Create;
 begin
@@ -167,5 +143,77 @@ end;
 
 
 
+
+procedure TPrincipal.N5PWOPERREPRINTReimpresso1Click(Sender: TObject);
+begin
+
+    // Transação de Reimpressão
+   // PGWLib.Reimpressao();
+
+end;
+
+procedure TPrincipal.N7PWOPERADMIN1Click(Sender: TObject);
+begin
+
+    // Transação Administrativa
+   // PGWLib.Admin();
+
+end;
+
+procedure TPrincipal.PWiConfirmation1Click(Sender: TObject);
+begin
+
+    //  Confirmação de Transação
+   PGWLib.ConfirmaTrasacao();
+
+
+end;
+
+procedure TPrincipal.PWiInit1Click(Sender: TObject);
+begin
+
+      // Inicializar Lib
+      PGWLib.Init();
+
+end;
+
+procedure TPrincipal.PWOPERINSTALL1Click(Sender: TObject);
+begin
+
+    // Instalar Ponto de Captura
+    PGWLib.Instalacao();
+
+end;
+
+procedure TPrincipal.PWOPERRPTDETAIL1Click(Sender: TObject);
+begin
+    // Relatórios
+   // PGWLib.Relatorios();
+
+end;
+
+procedure TPrincipal.PWOPERSALEVenda1Click(Sender: TObject);
+begin
+
+    // Transação de Venda
+    PGWLib.venda02();
+
+end;
+
+procedure TPrincipal.PWOPERSALEVOIDCancelamento1Click(Sender: TObject);
+begin
+
+      // Cancelamento
+      PGWLib.Cancelamento();
+
+end;
+
+procedure TPrincipal.PWOPERVERSIONVersodaDLL1Click(Sender: TObject);
+begin
+
+    // versão atual da DLL
+    PGWLib.GetVersao();
+
+end;
 
 end.
