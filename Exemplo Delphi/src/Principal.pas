@@ -148,7 +148,7 @@ procedure TPrincipal.N5PWOPERREPRINTReimpresso1Click(Sender: TObject);
 begin
 
     // Transação de Reimpressão
-   // PGWLib.Reimpressao();
+       PGWLib.Reimpressao();
 
 end;
 
@@ -196,7 +196,7 @@ procedure TPrincipal.PWOPERSALEVenda1Click(Sender: TObject);
 begin
 
     // Transação de Venda
-    PGWLib.venda02();
+    PGWLib.venda();
 
 end;
 

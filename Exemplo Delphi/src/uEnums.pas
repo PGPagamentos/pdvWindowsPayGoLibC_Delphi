@@ -24,6 +24,9 @@ private
 {}
 public
 
+
+
+
 const
 
 
@@ -178,6 +181,7 @@ const
     PWINFO_CARDENTMODE = 192;   // Modo(s) de entrada do cartão: 1: digitado 2: tarja magnética 4: chip com contato 16: fallback de chip para tarja 32: chip sem contato simulando tarja (cliente informa tipo efetivamente utilizado) 64: chip sem contato EMV (cliente informa tipo efetivamente utilizado) 256: fallback de tarja para digitado
     PWINFO_CARDFULLPAN = 193;   // Número do cartão completo, para transação digitada. Este dado não pode ser recuperado pela função PW_iGetResult
     PWINFO_CARDEXPDATE = 194;   // Data de vencimento do cartão (formato “MMAA”).
+    PWINFO_CARDNAMESTD = 196;   // Descrição do produto bandeira padrão relacionado ao BIN.
     PWINFO_CARDPARCPAN = 200;   // Número do cartão, truncado ou mascarado
     PWINFO_CHOLDVERIF = 207;    // Verificação do portador, soma dos seguintes valores: “1”: Assinatura do portador em papel. “2”: Senha verificada off-line. “4”: Senha off-line bloqueada no decorrer desta transação. “8”: Senha verificada online
     PWINFO_AID = 216;           // Aplicação do cartão utilizada durante a transação
@@ -326,6 +330,13 @@ const
    parceladoEmissor = 2;
    parceladoEstabelecimento = 4;
    preDatado    = 8;
+
+
+   WInputH:Integer = 750;
+   WInputV:Integer = 140;
+
+
+
 
 
 {}
