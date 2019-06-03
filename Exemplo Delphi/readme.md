@@ -3,7 +3,9 @@
 ### Funcionalidades implementadas neste exemplo:
   - Instalação
   - Venda
-  - 
+  - Confirmação
+  - Cancelamento
+  - Reimpressão
 
 ### Pré-requisitos
   - Delphi 
