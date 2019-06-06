@@ -41,9 +41,6 @@ implementation
 
 
 
-
-
-
 //==========================================================
   {
     Auxliar para capturar tamanho dos caracteres de InputBox
@@ -245,23 +242,23 @@ begin
   Width := MulDiv(164, DialogUnits.X, 4);
   MaxLength := 255;
 
-  if Tipo = 1 then         // Data com ano de 4 digitos
+  if Tipo = 1 then          // Data com ano de 4 digitos
   begin
     EditMask := '!99/99/0000;0;_';
   end;
 
-  if Tipo = 2 then        // Valor
+  if Tipo = 2 then         // Valor
   begin
       //EditMask :=  'R$ ###,###,##0.00;0;_';
     EditMask :=  'R$ 0,00;0;_';
   end;
 
-  if Tipo = 3 then       // Horário
+  if Tipo = 3 then        // Horário
   begin
     EditMask :=  '!90:00;0;_';
   end;
 
- if Tipo = 4 then         // Data com ano  de 2 digitos
+ if Tipo = 4 then        // Data com ano  de 2 digitos
   begin
     EditMask := '!99/99/00;0;_';
   end;
@@ -270,6 +267,7 @@ begin
   // PassWordChar := ´*´;
   Text := Value;
   SelectAll;
+
 end;
   ButtonTop := Edit.Top + Edit.Height + 15;
   ButtonWidth := MulDiv(50, DialogUnits.X, 4);
