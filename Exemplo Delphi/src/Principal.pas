@@ -6,13 +6,13 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, System.StrUtils, system.AnsiStrings,
   Vcl.Graphics,Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, System.Types, System.TypInfo,uEnums,
-  Vcl.ExtCtrls, uLib, uPGWLib, Vcl.Menus;
+  Vcl.ExtCtrls, uLib, uPGWLib, Vcl.Menus, Vcl.Mask;
 
 type
 
 
 
-  TPrincipal = class(TForm)
+  TTelPrincipal = class(TForm)
     Label1: TLabel;
     Panel1: TPanel;
     Label2: TLabel;
@@ -40,6 +40,9 @@ type
     PWOPERRPTDETAIL1: TMenuItem;
     N8: TMenuItem;
     N7PWOPERADMIN1: TMenuItem;
+    N9: TMenuItem;
+    Button1: TButton;
+    Button2: TButton;
     procedure FormCreate(Sender: TObject);
     procedure FormKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure PWiInit1Click(Sender: TObject);
@@ -51,6 +54,9 @@ type
     procedure N5PWOPERREPRINTReimpresso1Click(Sender: TObject);
     procedure PWOPERRPTDETAIL1Click(Sender: TObject);
     procedure N7PWOPERADMIN1Click(Sender: TObject);
+    procedure Button1Click(Sender: TObject);
+    procedure Button2Click(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
 
 
 
@@ -74,13 +80,6 @@ type
    Destructor  Destroy; Override; // declaração do metodo destrutor
 
 
-   var
-
-
-
-
-
-
 
 
   end;
@@ -92,7 +91,7 @@ type
 
 
 var
-  PPrincipal: TPrincipal;
+  TPrincipal: TTelPrincipal;
 
 
 
@@ -102,8 +101,30 @@ implementation
 
 {$R *.dfm}
 
+uses FCaptura;
 
-constructor TPrincipal.Create;
+//uses FrmCaptura;
+
+
+
+
+procedure TTelPrincipal.Button1Click(Sender: TObject);
+begin
+
+    // Limpa Log
+    Memo1.Clear;
+
+end;
+
+procedure TTelPrincipal.Button2Click(Sender: TObject);
+begin
+
+     // TelCaptura.ShowModal;
+
+
+end;
+
+constructor TTelPrincipal.Create;
 begin
 
   PWEnums := TCEnums.Create;
@@ -112,14 +133,21 @@ begin
 
 end;
 
-destructor TPrincipal.Destroy;
+destructor TTelPrincipal.Destroy;
 begin
   PWEnums.Free;
 
   inherited;
 end;
 
-procedure TPrincipal.FormCreate(Sender: TObject);
+procedure TTelPrincipal.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+
+  Application.Terminate;
+
+end;
+
+procedure TTelPrincipal.FormCreate(Sender: TObject);
 begin
       //=================================================
       //  Atualiza Form Inicial com Dados da Aplicação
@@ -133,7 +161,7 @@ begin
 end;
 
 
-procedure TPrincipal.FormKeyUp(Sender: TObject; var Key: Word;
+procedure TTelPrincipal.FormKeyUp(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
      //label6.caption := Key.ToString;
@@ -144,7 +172,7 @@ end;
 
 
 
-procedure TPrincipal.N5PWOPERREPRINTReimpresso1Click(Sender: TObject);
+procedure TTelPrincipal.N5PWOPERREPRINTReimpresso1Click(Sender: TObject);
 begin
 
     // Transação de Reimpressão
@@ -152,7 +180,7 @@ begin
 
 end;
 
-procedure TPrincipal.N7PWOPERADMIN1Click(Sender: TObject);
+procedure TTelPrincipal.N7PWOPERADMIN1Click(Sender: TObject);
 begin
 
     // Transação Administrativa
@@ -160,7 +188,7 @@ begin
 
 end;
 
-procedure TPrincipal.PWiConfirmation1Click(Sender: TObject);
+procedure TTelPrincipal.PWiConfirmation1Click(Sender: TObject);
 begin
 
     //  Confirmação de Transação
@@ -169,7 +197,7 @@ begin
 
 end;
 
-procedure TPrincipal.PWiInit1Click(Sender: TObject);
+procedure TTelPrincipal.PWiInit1Click(Sender: TObject);
 begin
 
       // Inicializar Lib
@@ -177,7 +205,7 @@ begin
 
 end;
 
-procedure TPrincipal.PWOPERINSTALL1Click(Sender: TObject);
+procedure TTelPrincipal.PWOPERINSTALL1Click(Sender: TObject);
 begin
 
     // Instalar Ponto de Captura
@@ -185,14 +213,14 @@ begin
 
 end;
 
-procedure TPrincipal.PWOPERRPTDETAIL1Click(Sender: TObject);
+procedure TTelPrincipal.PWOPERRPTDETAIL1Click(Sender: TObject);
 begin
     // Relatórios
-   // PGWLib.Relatorios();
+    PGWLib.Relatorios();
 
 end;
 
-procedure TPrincipal.PWOPERSALEVenda1Click(Sender: TObject);
+procedure TTelPrincipal.PWOPERSALEVenda1Click(Sender: TObject);
 begin
 
     // Transação de Venda
@@ -200,7 +228,7 @@ begin
 
 end;
 
-procedure TPrincipal.PWOPERSALEVOIDCancelamento1Click(Sender: TObject);
+procedure TTelPrincipal.PWOPERSALEVOIDCancelamento1Click(Sender: TObject);
 begin
 
       // Cancelamento
@@ -208,7 +236,7 @@ begin
 
 end;
 
-procedure TPrincipal.PWOPERVERSIONVersodaDLL1Click(Sender: TObject);
+procedure TTelPrincipal.PWOPERVERSIONVersodaDLL1Click(Sender: TObject);
 begin
 
     // versão atual da DLL

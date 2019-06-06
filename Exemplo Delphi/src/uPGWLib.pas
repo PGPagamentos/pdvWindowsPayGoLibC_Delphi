@@ -109,6 +109,7 @@ Type
 
 
   TPGWLib = class
+  private
   //private
     { private declarations }
   protected
@@ -154,7 +155,7 @@ Type
 
     function MandaMemo(Descr:string):integer;
 
-    //function ExecTransac:Integer;
+    function CapturaPinPad(identificador:Byte; min:Byte; max:Byte):Integer;
 
 
 
@@ -700,10 +701,9 @@ Type
                                    de erro pode ser obtida através da função PW_iGetResult (PWINFO_RESULTMSG).
    }
 //=========================================================================================================*/
-  function PW_iPPGetUserData(uiMessageId:UInt16; bMinLen:Byte; bMaxLen:Byte; iToutSec:Int16; pszData:Char):Int16; StdCall; External 'PGWebLib.dll';
-
-
-
+  //function PW_iPPGetUserData(uiMessageId:UInt16; bMinLen:Byte; bMaxLen:Byte; iToutSec:Int16; pszData:Char):Int16; StdCall; External 'PGWebLib.dll';
+  //function PW_iPPGetUserData(uiMessageId:UInt16; bMinLen:Byte; bMaxLen:Byte; iToutSec:Int16; var pszData: PSZ_GetData):Int16; StdCall; External 'PGWebLib.dll';
+  function PW_iPPGetUserData(uiMessageId:UInt16; bMinLen:Byte; bMaxLen:Byte; iToutSec:Int16; var pszData: PSZ_GetData):Int16; StdCall; External 'PGWebLib.dll';
 
 //=========================================================================================================*\
   { Funcao     :  PW_iPPGetPINBlock
@@ -768,13 +768,6 @@ uses Principal;
 
     gstConfirmData: ConfirmaData;
 
-
-{    gstConfirmDataR: ConfirmaDataR;
-    gstConfirmDataE: ConfirmaDataE;
-    gstConfirmDataL: ConfirmaDataL;
-    gstConfirmDataV: ConfirmaDataV;
-    gstConfirmDataA: ConfirmaDataA;
-}
 
 
     iNumParam: Int16;
@@ -900,8 +893,8 @@ begin
 
 
 
-    PPrincipal.Memo1.Lines.Clear;
-    PPrincipal.Memo1.Visible := False;
+    TPrincipal.Memo1.Lines.Clear;
+    TPrincipal.Memo1.Visible := False;
 
 
 
@@ -917,21 +910,13 @@ begin
     vRetorno := PW_iExecTransac(vGetdataArray, @xNumParam);
 
 
-    //winfo := PWEnums.PWINFO_SERVERPND;
-    //iRet := PW_iGetResult(winfo, vGetpszData, SizeOf(vGetpszData));
-    //iRet := PW_iGetResult(PWEnums.PWINFO_SERVERPND, vGetpszErro, SizeOf(vGetpszErro));
-
-
-    //PrintResultParams();
-
-
 
     // Captura Informação
     iRet := PW_iGetResult(winfo, vGetpszData, SizeOf(vGetpszData));
     wxyvolta := vGetpszData[0].pszDataxx;
     Application.MessageBox(PChar(wxyvolta),'Versão da DLL',mb_OK+mb_IconInformation);
 
-    PPrincipal.Label1.Visible := False;
+    TPrincipal.Label1.Visible := False;
     Application.ProcessMessages;
 
 
@@ -977,12 +962,12 @@ begin
                   begin
                       iRetErro := PW_iGetResult(PWEnums.PWINFO_RESULTMSG, vGetpszData, SizeOf(vGetpszData));
                       Volta := vGetpszData[0].pszDataxx;
-                      if (PPrincipal.Memo1.Visible = False) then
+                      if (TPrincipal.Memo1.Visible = False) then
                          begin
-                           PPrincipal.Memo1.Visible := True;
+                           TPrincipal.Memo1.Visible := True;
                          end;
-                           PPrincipal.Memo1.Lines.Add(Volta);
-                           PPrincipal.Memo1.Lines.Add(' ');
+                           TPrincipal.Memo1.Lines.Add(Volta);
+                           TPrincipal.Memo1.Lines.Add(' ');
                            //Application.MessageBox(PChar(Volta),'Erro',mb_OK+mb_IconInformation);
                   end;
 
@@ -991,12 +976,12 @@ begin
                   begin
                       iRetErro := PW_iGetResult(PWEnums.PWINFO_RESULTMSG, vGetpszData, SizeOf(vGetpszData));
                       Volta := vGetpszData[0].pszDataxx;
-                      if (PPrincipal.Memo1.Visible = False) then
+                      if (TPrincipal.Memo1.Visible = False) then
                          begin
-                           PPrincipal.Memo1.Visible := True;
+                           TPrincipal.Memo1.Visible := True;
                          end;
-                           PPrincipal.Memo1.Lines.Add(Volta);
-                           PPrincipal.Memo1.Lines.Add(' ');
+                           TPrincipal.Memo1.Lines.Add(Volta);
+                           TPrincipal.Memo1.Lines.Add(' ');
                   end;
 
 
@@ -1118,12 +1103,12 @@ function TPGWLib.Cancelamento: Integer;
                   begin
                       iRetErro := PW_iGetResult(PWEnums.PWINFO_RESULTMSG, vGetpszData, SizeOf(vGetpszData));
                       Volta := vGetpszData[0].pszDataxx;
-                      if (PPrincipal.Memo1.Visible = False) then
+                      if (TPrincipal.Memo1.Visible = False) then
                          begin
-                           PPrincipal.Memo1.Visible := True;
+                           TPrincipal.Memo1.Visible := True;
                          end;
-                           PPrincipal.Memo1.Lines.Add(Volta);
-                           PPrincipal.Memo1.Lines.Add(' ');
+                           TPrincipal.Memo1.Lines.Add(Volta);
+                           TPrincipal.Memo1.Lines.Add(' ');
                            //Application.MessageBox(PChar(Volta),'Erro',mb_OK+mb_IconInformation);
                   end;
 
@@ -1132,12 +1117,12 @@ function TPGWLib.Cancelamento: Integer;
                   begin
                       iRetErro := PW_iGetResult(PWEnums.PWINFO_RESULTMSG, vGetpszData, SizeOf(vGetpszData));
                       Volta := vGetpszData[0].pszDataxx;
-                      if (PPrincipal.Memo1.Visible = False) then
+                      if (TPrincipal.Memo1.Visible = False) then
                          begin
-                           PPrincipal.Memo1.Visible := True;
+                           TPrincipal.Memo1.Visible := True;
                          end;
-                           PPrincipal.Memo1.Lines.Add(Volta);
-                           PPrincipal.Memo1.Lines.Add(' ');
+                           TPrincipal.Memo1.Lines.Add(Volta);
+                           TPrincipal.Memo1.Lines.Add(' ');
                   end;
 
 
@@ -1211,12 +1196,12 @@ function TPGWLib.Cancelamento: Integer;
                   if iRet <> PWEnums.PWRET_OK then
                      begin
 
-                        if (PPrincipal.Memo1.Visible = False) then
+                        if (TPrincipal.Memo1.Visible = False) then
                            begin
-                             PPrincipal.Memo1.Visible := True;
+                             TPrincipal.Memo1.Visible := True;
                            end;
-                             PPrincipal.Memo1.Lines.Add('Erro : ...' + IntToStr(iRet));
-                             PPrincipal.Memo1.Lines.Add(' ');
+                             TPrincipal.Memo1.Lines.Add('Erro : ...' + IntToStr(iRet));
+                             TPrincipal.Memo1.Lines.Add(' ');
 
                              Exit;
 
@@ -1240,15 +1225,21 @@ function TPGWLib.Cancelamento: Integer;
                   Volta := vGetpszData[0].pszDataxx;
                   if (Volta = '1') then
                      begin
-                        if (PPrincipal.Memo1.Visible = False) then
+                        if (TPrincipal.Memo1.Visible = False) then
                            begin
-                             PPrincipal.Memo1.Visible := True;
+                             TPrincipal.Memo1.Visible := True;
                            end;
-                             PPrincipal.Memo1.Lines.Add(' PWINFO_CNFREQ = 1');
-                             PPrincipal.Memo1.Lines.Add(' ');
-                             PPrincipal.Memo1.Lines.Add('É Necessário Confirmar esta Transação !');
-                             PPrincipal.Memo1.Lines.Add(' ');
+                             TPrincipal.Memo1.Lines.Add(' PWINFO_CNFREQ = 1');
+                             TPrincipal.Memo1.Lines.Add(' ');
+                             TPrincipal.Memo1.Lines.Add('É Necessário Confirmar esta Transação !');
+                             TPrincipal.Memo1.Lines.Add(' ');
+
+
+                           // Metodo confirma a transação
+                           ConfirmaTrasacao();
+
                      end;
+
 
 
                      Break;
@@ -1264,6 +1255,23 @@ function TPGWLib.Cancelamento: Integer;
   end;
 
 
+function TPGWLib.CapturaPinPad(identificador: Byte; min, max: Byte): Integer;
+var
+ teste:string;
+ codigo: Byte;
+begin
+
+
+     iRet := PW_iPPGetUserData(identificador+1,min+1,max+1,30,vGetpszData);
+     if (iRet <> PWEnums.PWRET_OK) then
+         begin
+           ShowMessage('Erro: ' + IntToStr(iRet));
+         end;
+
+
+     //iRet := PW_iPPGetUserData(1,min+1,max+1,30,vGetpszData);
+
+end;
 
 
 //=====================================================================================
@@ -1281,6 +1289,7 @@ var
   falta : string;
   iRet : Integer;
   iRetorno : Integer;
+  iRetErro: Integer;
   ulStatus:Integer;
   Menu:Byte;
   Volta : String;
@@ -1291,7 +1300,7 @@ var
   tamanho:Integer;
   passou:Integer;
   testeNum: Array[0..10] of Char;
-
+  WretornaConf: PSZ_GetData;
 begin
 
 
@@ -1334,65 +1343,92 @@ begin
    '10 - PWCNF_REV_FISC_AUT  '  + chr(13);
 
 
+    strTagNFCe := '';
 
-    StrTagNFCe:= vInputBox('Escolha Confirmação: ',falta,'',PWEnums.WInputH,PWEnums.WInputV);
-    Menu := StrToInt(strTagNFCe);
+    while (X < 5) do
+    begin
 
 
+        StrTagNFCe:= vInputBox('Escolha Confirmação: ',falta,'',PWEnums.WInputH,PWEnums.WInputV);
 
-    case Menu of
+        try
+           Menu := StrToInt(strTagNFCe);
+        Except
+           ShowMessage('Escolha uma opção Válida');
+           Continue;
+        end;
 
-         1:
-           begin
-             ulStatus := PWEnums.PWCNF_CNF_AUTO;
-           end;
 
-         2:
-           begin
-            ulStatus  := PWEnums.PWCNF_CNF_MANU_AUT;
-           end;
-         3:
-           begin
-            ulStatus := PWEnums.PWCNF_REV_MANU_AUT;
-           end;
-         4:
-           begin
-            ulStatus := PWEnums.PWCNF_REV_DISP_AUT;
-           end;
+        case Menu of
 
-         5:
-           begin
-            ulStatus := PWEnums.PWCNF_REV_DISP_AUT;
-           end;
+             1:
+               begin
+                 ulStatus := PWEnums.PWCNF_CNF_AUTO;
+                 Break;
+               end;
 
-         6:
-           begin
-            ulStatus := PWEnums.PWCNF_REV_COMM_AUT;
-           end;
+             2:
+               begin
+                ulStatus  := PWEnums.PWCNF_CNF_MANU_AUT;
+                 Break;
+               end;
+             3:
+               begin
+                ulStatus := PWEnums.PWCNF_REV_MANU_AUT;
+                Break;
+               end;
+             4:
+               begin
+                ulStatus := PWEnums.PWCNF_REV_DISP_AUT;
+                 Break;
+               end;
 
-         7:
-           begin
-            ulStatus := PWEnums.PWCNF_REV_ABORT;
-           end;
+             5:
+               begin
+                ulStatus := PWEnums.PWCNF_REV_DISP_AUT;
+                Break;
+               end;
 
-         8:
-           begin
-            ulStatus := PWEnums.PWCNF_REV_OTHER_AUT;
-           end;
+             6:
+               begin
+                ulStatus := PWEnums.PWCNF_REV_COMM_AUT;
+                Break;
+               end;
 
-         9:
-           begin
-            ulStatus := PWEnums.PWCNF_REV_PWR_AUT;
-           end;
+             7:
+               begin
+                ulStatus := PWEnums.PWCNF_REV_ABORT;
+                Break;
+               end;
 
-         10:
-           begin
-            ulStatus := PWEnums.PWCNF_REV_FISC_AUT;
-           end;
+             8:
+               begin
+                ulStatus := PWEnums.PWCNF_REV_OTHER_AUT;
+                Break;
+               end;
+
+             9:
+               begin
+                ulStatus := PWEnums.PWCNF_REV_PWR_AUT;
+                Break;
+               end;
+
+             10:
+               begin
+                ulStatus := PWEnums.PWCNF_REV_FISC_AUT;
+                Break;
+               end;
+             else
+               begin
+                 ShowMessage('Opção Inválida');
+                 Continue;
+               end;
+
+
+        end;
 
 
     end;
-
 
 
      falta := '0 - Confirmar Ultima Transação ' + chr(13) +
@@ -1402,6 +1438,14 @@ begin
      begin
 
           strTagNFCe:= vInputBox('Escolha Opção: ',falta,'',PWEnums.WInputH,PWEnums.WInputV);
+
+          try
+             iRetErro := StrToInt(strTagNFCe);
+          Except
+             ShowMessage('Escolha uma opção Válida');
+             Continue;
+          end;
+
 
           if  (StrToInt(strTagNFCe) = 0) or (StrToInt(strTagNFCe) = 1)  then
                begin
@@ -1460,12 +1504,12 @@ begin
               begin
                   iRetorno := PW_iGetResult(PWEnums.PWINFO_RESULTMSG, vGetpszData, SizeOf(vGetpszData));
                   Volta := vGetpszData[0].pszDataxx;
-                  if (PPrincipal.Memo1.Visible = False) then
+                  if (TPrincipal.Memo1.Visible = False) then
                      begin
-                       PPrincipal.Memo1.Visible := True;
+                       TPrincipal.Memo1.Visible := True;
                      end;
-                       PPrincipal.Memo1.Lines.Add(Volta);
-                       PPrincipal.Memo1.Lines.Add(' ');
+                       TPrincipal.Memo1.Lines.Add(Volta);
+                       TPrincipal.Memo1.Lines.Add(' ');
               end;
 
           // verifica se foi feito instalação
@@ -1473,12 +1517,12 @@ begin
               begin
                   iRetorno := PW_iGetResult(PWEnums.PWINFO_RESULTMSG, vGetpszData, SizeOf(vGetpszData));
                   Volta := vGetpszData[0].pszDataxx;
-                  if (PPrincipal.Memo1.Visible = False) then
+                  if (TPrincipal.Memo1.Visible = False) then
                      begin
-                       PPrincipal.Memo1.Visible := True;
+                       TPrincipal.Memo1.Visible := True;
                      end;
-                       PPrincipal.Memo1.Lines.Add(Volta);
-                       PPrincipal.Memo1.Lines.Add(' ');
+                       TPrincipal.Memo1.Lines.Add(Volta);
+                       TPrincipal.Memo1.Lines.Add(' ');
               end;
 
 
@@ -1495,18 +1539,26 @@ begin
 
 
 
-    iRetorno := PW_iGetResult(PWEnums.PWINFO_RESULTMSG, vGetpszData, SizeOf(vGetpszData));
-    volta := vGetpszData[0].pszDataxx;
+    iRetorno := PW_iGetResult(PWEnums.PWINFO_RESULTMSG, WretornaConf, SizeOf(WretornaConf));
+    volta :=   WretornaConf[0].pszDataxx;
 
 
 
-    if (PPrincipal.Memo1.Visible = False) then
+    if (TPrincipal.Memo1.Visible = False) then
        begin
-         PPrincipal.Memo1.Visible := True;
+         TPrincipal.Memo1.Visible := True;
        end;
-      PPrincipal.Memo1.Lines.Add(Volta);
-      PPrincipal.Memo1.Lines.Add(' ');
+      TPrincipal.Memo1.Lines.Add(Volta);
+      TPrincipal.Memo1.Lines.Add(' ');
 
+
+    if (iRet = PWRET_OK) then
+       begin
+          TPrincipal.Memo1.Lines.Add('CONFIRMAÇÃO OK');
+          TPrincipal.Memo1.Lines.Add(' ');
+          TPrincipal.Memo1.Lines.Add('PWRET_OK');
+          TPrincipal.Memo1.Lines.Add(' ');
+       end;
 
 
 
@@ -1647,12 +1699,12 @@ begin
                   begin
                       iRetErro := PW_iGetResult(PWEnums.PWINFO_RESULTMSG, vGetpszData, SizeOf(vGetpszData));
                       Volta := vGetpszData[0].pszDataxx;
-                      if (PPrincipal.Memo1.Visible = False) then
+                      if (TPrincipal.Memo1.Visible = False) then
                          begin
-                           PPrincipal.Memo1.Visible := True;
+                           TPrincipal.Memo1.Visible := True;
                          end;
-                           PPrincipal.Memo1.Lines.Add(Volta);
-                           PPrincipal.Memo1.Lines.Add(' ');
+                           TPrincipal.Memo1.Lines.Add(Volta);
+                           TPrincipal.Memo1.Lines.Add(' ');
                            //Application.MessageBox(PChar(Volta),'Erro',mb_OK+mb_IconInformation);
                   end;
 
@@ -1661,12 +1713,12 @@ begin
                   begin
                       iRetErro := PW_iGetResult(PWEnums.PWINFO_RESULTMSG, vGetpszData, SizeOf(vGetpszData));
                       Volta := vGetpszData[0].pszDataxx;
-                      if (PPrincipal.Memo1.Visible = False) then
+                      if (TPrincipal.Memo1.Visible = False) then
                          begin
-                           PPrincipal.Memo1.Visible := True;
+                           TPrincipal.Memo1.Visible := True;
                          end;
-                           PPrincipal.Memo1.Lines.Add(Volta);
-                           PPrincipal.Memo1.Lines.Add(' ');
+                           TPrincipal.Memo1.Lines.Add(Volta);
+                           TPrincipal.Memo1.Lines.Add(' ');
                   end;
 
 
@@ -1751,14 +1803,14 @@ begin
                   Volta := vGetpszData[0].pszDataxx;
                   if (Volta = '1') then
                      begin
-                        if (PPrincipal.Memo1.Visible = False) then
+                        if (TPrincipal.Memo1.Visible = False) then
                            begin
-                             PPrincipal.Memo1.Visible := True;
+                             TPrincipal.Memo1.Visible := True;
                            end;
-                             PPrincipal.Memo1.Lines.Add(' PWINFO_CNFREQ = 1');
-                             PPrincipal.Memo1.Lines.Add(' ');
-                             PPrincipal.Memo1.Lines.Add('É Necessário Confirmar esta Transação !');
-                             PPrincipal.Memo1.Lines.Add(' ');
+                             TPrincipal.Memo1.Lines.Add(' PWINFO_CNFREQ = 1');
+                             TPrincipal.Memo1.Lines.Add(' ');
+                             TPrincipal.Memo1.Lines.Add('É Necessário Confirmar esta Transação !');
+                             TPrincipal.Memo1.Lines.Add(' ');
                      end;
 
 
@@ -1841,11 +1893,11 @@ end;
 function TPGWLib.MandaMemo(Descr:string): integer;
 begin
 
-    if (PPrincipal.Memo1.Visible = False) then
+    if (TPrincipal.Memo1.Visible = False) then
        begin
-         PPrincipal.Memo1.Visible := True;
+         TPrincipal.Memo1.Visible := True;
        end;
-         PPrincipal.Memo1.Lines.Add(Descr);
+         TPrincipal.Memo1.Lines.Add(Descr);
          //PPrincipal.Memo1.Lines.Add(' ');
 
      Result := 0;
@@ -1884,12 +1936,12 @@ begin
                   begin
                       iRetErro := PW_iGetResult(PWEnums.PWINFO_RESULTMSG, vGetpszData, SizeOf(vGetpszData));
                       Volta := vGetpszData[0].pszDataxx;
-                      if (PPrincipal.Memo1.Visible = False) then
+                      if (TPrincipal.Memo1.Visible = False) then
                          begin
-                           PPrincipal.Memo1.Visible := True;
+                           TPrincipal.Memo1.Visible := True;
                          end;
-                           PPrincipal.Memo1.Lines.Add(Volta);
-                           PPrincipal.Memo1.Lines.Add(' ');
+                           TPrincipal.Memo1.Lines.Add(Volta);
+                           TPrincipal.Memo1.Lines.Add(' ');
                            //Application.MessageBox(PChar(Volta),'Erro',mb_OK+mb_IconInformation);
                   end;
 
@@ -1898,12 +1950,12 @@ begin
                   begin
                       iRetErro := PW_iGetResult(PWEnums.PWINFO_RESULTMSG, vGetpszData, SizeOf(vGetpszData));
                       Volta := vGetpszData[0].pszDataxx;
-                      if (PPrincipal.Memo1.Visible = False) then
+                      if (TPrincipal.Memo1.Visible = False) then
                          begin
-                           PPrincipal.Memo1.Visible := True;
+                           TPrincipal.Memo1.Visible := True;
                          end;
-                           PPrincipal.Memo1.Lines.Add(Volta);
-                           PPrincipal.Memo1.Lines.Add(' ');
+                           TPrincipal.Memo1.Lines.Add(Volta);
+                           TPrincipal.Memo1.Lines.Add(' ');
                   end;
 
 
@@ -2043,12 +2095,12 @@ begin
                   begin
                       iRetErro := PW_iGetResult(PWEnums.PWINFO_RESULTMSG, vGetpszData, SizeOf(vGetpszData));
                       Volta := vGetpszData[0].pszDataxx;
-                      if (PPrincipal.Memo1.Visible = False) then
+                      if (TPrincipal.Memo1.Visible = False) then
                          begin
-                           PPrincipal.Memo1.Visible := True;
+                           TPrincipal.Memo1.Visible := True;
                          end;
-                           PPrincipal.Memo1.Lines.Add(Volta);
-                           PPrincipal.Memo1.Lines.Add(' ');
+                           TPrincipal.Memo1.Lines.Add(Volta);
+                           TPrincipal.Memo1.Lines.Add(' ');
                            //Application.MessageBox(PChar(Volta),'Erro',mb_OK+mb_IconInformation);
                   end;
 
@@ -2057,12 +2109,12 @@ begin
                   begin
                       iRetErro := PW_iGetResult(PWEnums.PWINFO_RESULTMSG, vGetpszData, SizeOf(vGetpszData));
                       Volta := vGetpszData[0].pszDataxx;
-                      if (PPrincipal.Memo1.Visible = False) then
+                      if (TPrincipal.Memo1.Visible = False) then
                          begin
-                           PPrincipal.Memo1.Visible := True;
+                           TPrincipal.Memo1.Visible := True;
                          end;
-                           PPrincipal.Memo1.Lines.Add(Volta);
-                           PPrincipal.Memo1.Lines.Add(' ');
+                           TPrincipal.Memo1.Lines.Add(Volta);
+                           TPrincipal.Memo1.Lines.Add(' ');
                   end;
 
 
@@ -2120,11 +2172,26 @@ begin
                     begin
                       I := I+1;
                       Continue;
-                    end
-                  else
-                    begin
-                      Break;
                     end;
+
+
+                  if (iRet = PWEnums.PWRET_FROMHOSTPENDTRN) then
+                      begin
+                          // Busca Parametros da Transação Pendente
+                          GetParamPendenteConfirma();
+
+                          //ShowMessage('Parametros Pendentes');
+
+                          {ShowMessage('ReqNum: ' + gstConfirmData[0].szReqNum);
+                          ShowMessage('Extref: ' + gstConfirmData[0].szExtRef);
+                          ShowMessage('Locref: ' + gstConfirmData[0].szLocRef);
+                          ShowMessage('VirtMerch: ' + gstConfirmData[0].szVirtMerch);
+                          ShowMessage('AuthSyst: ' + gstConfirmData[0].szAuthSyst);
+                          }
+                      end;
+
+
+                      Break;
 
               end;
 
@@ -2174,12 +2241,12 @@ begin
             Volta := vGetpszData[0].pszDataxx;
 //            Application.MessageBox(PChar(Volta),'Erro',mb_OK+mb_IconInformation);
 
-            if (PPrincipal.Memo1.Visible = False) then
+            if (TPrincipal.Memo1.Visible = False) then
                begin
-                 PPrincipal.Memo1.Visible := True;
+                 TPrincipal.Memo1.Visible := True;
                end;
-            PPrincipal.Memo1.Lines.Add(Volta);
-            PPrincipal.Memo1.Lines.Add(' ');
+            TPrincipal.Memo1.Lines.Add(Volta);
+            TPrincipal.Memo1.Lines.Add(' ');
 
 
             Result := iParam;
@@ -2233,12 +2300,12 @@ begin
                   begin
                       iRetErro := PW_iGetResult(PWEnums.PWINFO_RESULTMSG, vGetpszData, SizeOf(vGetpszData));
                       Volta := vGetpszData[0].pszDataxx;
-                      if (PPrincipal.Memo1.Visible = False) then
+                      if (TPrincipal.Memo1.Visible = False) then
                          begin
-                           PPrincipal.Memo1.Visible := True;
+                           TPrincipal.Memo1.Visible := True;
                          end;
-                           PPrincipal.Memo1.Lines.Add(Volta);
-                           PPrincipal.Memo1.Lines.Add(' ');
+                           TPrincipal.Memo1.Lines.Add(Volta);
+                           TPrincipal.Memo1.Lines.Add(' ');
                            //Application.MessageBox(PChar(Volta),'Erro',mb_OK+mb_IconInformation);
                   end;
 
@@ -2247,12 +2314,12 @@ begin
                   begin
                       iRetErro := PW_iGetResult(PWEnums.PWINFO_RESULTMSG, vGetpszData, SizeOf(vGetpszData));
                       Volta := vGetpszData[0].pszDataxx;
-                      if (PPrincipal.Memo1.Visible = False) then
+                      if (TPrincipal.Memo1.Visible = False) then
                          begin
-                           PPrincipal.Memo1.Visible := True;
+                           TPrincipal.Memo1.Visible := True;
                          end;
-                           PPrincipal.Memo1.Lines.Add(Volta);
-                           PPrincipal.Memo1.Lines.Add(' ');
+                           TPrincipal.Memo1.Lines.Add(Volta);
+                           TPrincipal.Memo1.Lines.Add(' ');
                   end;
 
 
@@ -2350,15 +2417,19 @@ begin
                   Volta := vGetpszData[0].pszDataxx;
                   if (Volta = '1') then
                      begin
-                        if (PPrincipal.Memo1.Visible = False) then
+                        if (TPrincipal.Memo1.Visible = False) then
                            begin
-                             PPrincipal.Memo1.Visible := True;
+                             TPrincipal.Memo1.Visible := True;
                            end;
-                             PPrincipal.Memo1.Lines.Add(' PWINFO_CNFREQ = 1');
-                             PPrincipal.Memo1.Lines.Add(' ');
-                             PPrincipal.Memo1.Lines.Add('É Necessário Confirmar esta Transação !');
-                             PPrincipal.Memo1.Lines.Add(' ');
+                             TPrincipal.Memo1.Lines.Add(' PWINFO_CNFREQ = 1');
+                             TPrincipal.Memo1.Lines.Add(' ');
+                             TPrincipal.Memo1.Lines.Add('É Necessário Confirmar esta Transação !');
+                             TPrincipal.Memo1.Lines.Add(' ');
                      end;
+
+
+                     // Metodo confirma a transação
+                     ConfirmaTrasacao();
 
 
                   Break;
@@ -2398,6 +2469,7 @@ var
   StrTagNFCe: string;
   falta:string;
   iRet:Integer;
+  iRetByte:Byte;
   iRetErro : integer;
   Volta : String;
   strNome:string;
@@ -2405,7 +2477,7 @@ var
   ulEvent:UInt32;
   x:integer;
   iRetStr: string;
-
+  wTipoDado:Integer;
 begin
 
 
@@ -2435,7 +2507,9 @@ begin
 
                              begin
 
-                                 MandaMemo('Tipo de dados = MENU');
+                                 iRetByte := vstGetData[I].bTipoDeDado;
+                                 MandaMemo('Tipo de Dado: MENU - ' + IntToStr(iRetByte));
+                                 //MandaMemo('Tipo de dados = MENU');
                                  MandaMemo(vstGetData[i].szPrompt);
 
                                  falta := vstGetData[I].szPrompt + chr(13);
@@ -2503,15 +2577,17 @@ begin
 
                        PWEnums.PWDAT_TYPED:
                              begin
-
-                               MandaMemo('Tipo de dados = DIGITADO');
+                               iRetByte := vstGetData[I].bTipoDeDado;
+                               MandaMemo('Tipo de Dado: DIGITADO - ' + IntToStr(iRetByte));
                                MandaMemo(vstGetData[i].szPrompt);
                                MandaMemo('Tamanho Minimo: ' + IntToStr(vstGetData[I].bTamanhoMinimo));
                                MandaMemo('Tamanho Maximo: ' + IntToStr(vstGetData[I].bTamanhoMaximo));
                                iRetStr := vstGetData[I].szValorInicial;
                                MandaMemo('Valor Atual: ' + iRetStr);
+                               MandaMemo('Mascara: ' +  vstGetData[i].szMascaraDeCaptura);
+                               iRetByte := vstGetData[I].bValidacaoDado;
+                               MandaMemo('Validação de Dado: ' + inttostr(iRetByte));
                                MandaMemo(' ');
-
 
                                falta := vstGetData[I].szPrompt;
 
@@ -2520,8 +2596,57 @@ begin
                                while (X < 5) do
                                    begin
 
-                                       //ShowMessage('Mascara: ' + vstGetData[I].szMascaraDeCaptura);
-                                       StrTagNFCe:= vInputBox('Informar: ',falta,'',PWEnums.WInputH,PWEnums.WInputV);
+                                       wTipoDado := 0;
+
+                                       // Data
+                                       if  (vstGetData[I].wIdentificador = PWEnums.PWINFO_TRNORIGDATE) then
+                                            begin
+                                              if (vstGetData[i].szMascaraDeCaptura = '@@/@@/@@@@') then
+                                                  begin
+                                                    wTipoDado := 1;
+                                                  end
+                                               else
+                                                  begin
+                                                    wTipoDado := 4;
+                                                  end;
+                                            end;
+                                       // Valor
+                                       if  (vstGetData[I].wIdentificador = PWEnums.PWINFO_TOTAMNT) then
+                                            begin
+                                              wTipoDado := 2;
+                                            end;
+                                       // Horario
+                                       if  ((vstGetData[I].wIdentificador = 123) or (vstGetData[I].wIdentificador = 124)) then
+                                            begin
+                                              wTipoDado := 3;
+                                            end;
+
+
+                                        if (wTipoDado = 0) then
+                                            begin
+                                               StrTagNFCe:= vInputBox('Informar: ',falta,'',PWEnums.WInputH,PWEnums.WInputV);
+                                            end
+                                         else
+                                            begin
+                                               StrTagNFCe:= vMInputBox('Informar: ',falta,'',PWEnums.WInputH,PWEnums.WInputV,wTipoDado);
+                                            end;
+
+                                       {
+                                       if  (vstGetData[I].wIdentificador = PWEnums.PWINFO_TRNORIGDATE) then
+                                            begin
+                                               StrTagNFCe:= vMInputBox('Informar: ',falta,'',PWEnums.WInputH,PWEnums.WInputV,1);
+                                            end
+                                       if  (vstGetData[I].wIdentificador = PWEnums.PWINFO_TOTAMNT) then
+                                            begin
+                                               StrTagNFCe:= vMInputBox('Informar: ',falta,'',PWEnums.WInputH,PWEnums.WInputV,2);
+                                            end
+                                        else
+                                            begin
+                                               StrTagNFCe:= vInputBox('Informar: ',falta,'',PWEnums.WInputH,PWEnums.WInputV);
+                                            end;
+                                        }
+
+
 
                                        if (Length(StrTagNFCe) > vstGetData[I].bTamanhoMaximo) then
                                           begin
@@ -2535,15 +2660,6 @@ begin
                                               Continue;
                                           end;
 
-                                      { if (vstGetData[I].bValidacaoDado = 1) then
-                                          begin
-                                           if (StrToIntDef(StrTagNFCe,0) = 0) then
-                                              begin
-                                                ShowMessage('Informar Somente Numeros');
-                                                Continue;
-                                              end;
-                                          end;
-                                       }
 
                                           iRet := PW_iAddParam(vstGetData[I].wIdentificador,StrTagNFCe);
                                           if (iRet <> 0) then
@@ -2574,8 +2690,8 @@ begin
                        PWEnums.PWDAT_CARDINF:
                              begin
 
-                             MandaMemo('Tipo de dados = DADOS DO CARTAO');
-                             //MandaMemo(vstGetData[i].szPrompt);
+                             iRetByte := vstGetData[I].bTipoDeDado;
+                             MandaMemo('Tipo de Dado: DADOS DO CARTAO - ' + IntToStr(iRetByte));
 
                              if(vstGetData[I].ulTipoEntradaCartao = 1) then
                                begin
@@ -2600,12 +2716,12 @@ begin
                                    iRet := PW_iPPEventLoop(vGetpszDisplay, sizeof(vGetpszDisplay));
                                    if (iRet = PWEnums.PWRET_DISPLAY) then
                                       begin
-                                          if (PPrincipal.Memo1.Visible = False) then
+                                          if (TPrincipal.Memo1.Visible = False) then
                                              begin
-                                               PPrincipal.Memo1.Visible := True;
+                                               TPrincipal.Memo1.Visible := True;
                                              end;
-                                          PPrincipal.Memo1.Lines.Add(vGetpszDisplay[0].szDspMsg);
-                                          PPrincipal.Memo1.Lines.Add(' ');
+                                          TPrincipal.Memo1.Lines.Add(vGetpszDisplay[0].szDspMsg);
+                                          TPrincipal.Memo1.Lines.Add(' ');
 
                                       end;
 
@@ -2637,7 +2753,8 @@ begin
                             PWEnums.PWDAT_PPREMCRD:
                               begin
 
-                                 MandaMemo('Tipo de dados = PWDAT_PPREMCRD');
+                                 iRetByte := vstGetData[I].bTipoDeDado;
+                                 MandaMemo('Tipo de Dado: PWDAT_PPREMCRD - ' + IntToStr(iRetByte));
 
                                  iRet := PW_iPPRemoveCard();
 
@@ -2655,13 +2772,13 @@ begin
                                    iRet := PW_iPPEventLoop(vGetpszDisplay, sizeof(vGetpszDisplay));
                                    if (iRet = PWEnums.PWRET_DISPLAY) then
                                       begin
-                                          if (PPrincipal.Memo1.Visible = False) then
+                                          if (TPrincipal.Memo1.Visible = False) then
                                              begin
-                                               PPrincipal.Memo1.Visible := True;
+                                               TPrincipal.Memo1.Visible := True;
                                                // Memo1.Lines.Clear;
                                              end;
-                                          PPrincipal.Memo1.Lines.Add(vGetpszDisplay[0].szDspMsg);
-                                          PPrincipal.Memo1.Lines.Add(' ');
+                                          TPrincipal.Memo1.Lines.Add(vGetpszDisplay[0].szDspMsg);
+                                          TPrincipal.Memo1.Lines.Add(' ');
                                       end;
 
                                    //if((iRet <> PWEnums.PWRET_OK) And (iRet <> PWEnums.PWRET_DISPLAY) And (iRet <> PWEnums.PWRET_NOTHING)) then
@@ -2691,7 +2808,8 @@ begin
                             PWEnums.PWDAT_PPENCPIN:
                                begin
 
-                                 MandaMemo('Tipo de dados = SENHA');
+                                 iRetByte := vstGetData[I].bTipoDeDado;
+                                 MandaMemo('Tipo de Dado: SENHA - ' + IntToStr(iRetByte));
 
                                  iRet := PW_iPPGetPIN(I);
                                  if (iRet <> PWRET_OK) then
@@ -2708,12 +2826,12 @@ begin
                                    iRet := PW_iPPEventLoop(vGetpszDisplay, sizeof(vGetpszDisplay));
                                    if (iRet = PWEnums.PWRET_DISPLAY) then
                                       begin
-                                          if (PPrincipal.Memo1.Visible = False) then
+                                          if (TPrincipal.Memo1.Visible = False) then
                                              begin
-                                               PPrincipal.Memo1.Visible := True;
+                                               TPrincipal.Memo1.Visible := True;
                                              end;
-                                          PPrincipal.Memo1.Lines.Add(vGetpszDisplay[0].szDspMsg);
-                                          PPrincipal.Memo1.Lines.Add(' ');
+                                          TPrincipal.Memo1.Lines.Add(vGetpszDisplay[0].szDspMsg);
+                                          TPrincipal.Memo1.Lines.Add(' ');
                                       end;
 
 
@@ -2752,8 +2870,8 @@ begin
 
                                 begin
 
-                                 MandaMemo('Tipo de dados = CHIP OFFLINE');
-
+                                 iRetByte := vstGetData[I].bTipoDeDado;
+                                 MandaMemo('Tipo de Dado: CHIP OFFLINE - ' + IntToStr(iRetByte));
 
                                  iRet := PW_iPPGoOnChip(I);
 
@@ -2771,12 +2889,12 @@ begin
                                    iRet := PW_iPPEventLoop(vGetpszDisplay, sizeof(vGetpszDisplay));
                                    if (iRet = PWEnums.PWRET_DISPLAY) then
                                       begin
-                                          if (PPrincipal.Memo1.Visible = False) then
+                                          if (TPrincipal.Memo1.Visible = False) then
                                              begin
-                                               PPrincipal.Memo1.Visible := True;
+                                               TPrincipal.Memo1.Visible := True;
                                              end;
-                                          PPrincipal.Memo1.Lines.Add(vGetpszDisplay[0].szDspMsg);
-                                          PPrincipal.Memo1.Lines.Add(' ');
+                                          TPrincipal.Memo1.Lines.Add(vGetpszDisplay[0].szDspMsg);
+                                          TPrincipal.Memo1.Lines.Add(' ');
                                       end;
 
 
@@ -2815,7 +2933,8 @@ begin
                                 PWEnums.PWDAT_PPENTRY:
                                   begin
 
-                                     MandaMemo('Tipo de dados = DADO DIGITADO NO PINPAD');
+                                     iRetByte := vstGetData[I].bTipoDeDado;
+                                     MandaMemo('Tipo de Dado: DADO DIGITADO NO PINPAD - ' + IntToStr(iRetByte));
 
                                      iRet := PW_iPPGetData(I);
 
@@ -2834,12 +2953,12 @@ begin
                                        iRet := PW_iPPEventLoop(vGetpszDisplay, sizeof(vGetpszDisplay));
                                        if (iRet = PWEnums.PWRET_DISPLAY) then
                                           begin
-                                              if (PPrincipal.Memo1.Visible = False) then
+                                              if (TPrincipal.Memo1.Visible = False) then
                                                  begin
-                                                   PPrincipal.Memo1.Visible := True;
+                                                   TPrincipal.Memo1.Visible := True;
                                                  end;
-                                              PPrincipal.Memo1.Lines.Add(vGetpszDisplay[0].szDspMsg);
-                                              PPrincipal.Memo1.Lines.Add(' ');
+                                              TPrincipal.Memo1.Lines.Add(vGetpszDisplay[0].szDspMsg);
+                                              TPrincipal.Memo1.Lines.Add(' ');
                                           end;
 
 
@@ -2875,7 +2994,8 @@ begin
                                   PWEnums.PWDAT_CARDONL:
                                     begin
 
-                                       MandaMemo('Tipo de dados = CHIP ONLINE');
+                                       iRetByte := vstGetData[I].bTipoDeDado;
+                                       MandaMemo('Tipo de Dado: CHIP ONLINE - ' + IntToStr(iRetByte));
 
 
                                        iRet := PW_iPPFinishChip(I);
@@ -2894,13 +3014,13 @@ begin
                                          iRet := PW_iPPEventLoop(vGetpszDisplay, sizeof(vGetpszDisplay));
                                          if (iRet = PWEnums.PWRET_DISPLAY) then
                                             begin
-                                                if (PPrincipal.Memo1.Visible = False) then
+                                                if (TPrincipal.Memo1.Visible = False) then
                                                    begin
-                                                     PPrincipal.Memo1.Visible := True;
+                                                     TPrincipal.Memo1.Visible := True;
                                                      // Memo1.Lines.Clear;
                                                    end;
-                                                PPrincipal.Memo1.Lines.Add(vGetpszDisplay[0].szDspMsg);
-                                                PPrincipal.Memo1.Lines.Add(' ');
+                                                TPrincipal.Memo1.Lines.Add(vGetpszDisplay[0].szDspMsg);
+                                                TPrincipal.Memo1.Lines.Add(' ');
                                             end;
 
 
@@ -2940,7 +3060,8 @@ begin
                                   PWEnums.PWDAT_PPCONF:
                                   begin
 
-                                       MandaMemo('Tipo de dados = CONFIRMA DADO');
+                                       iRetByte := vstGetData[I].bTipoDeDado;
+                                       MandaMemo('Tipo de Dado: CONFIRMA DADO - ' + IntToStr(iRetByte));
 
                                        iRet := PW_iPPConfirmData(I);
 
@@ -2958,13 +3079,13 @@ begin
                                          iRet := PW_iPPEventLoop(vGetpszDisplay, sizeof(vGetpszDisplay));
                                          if (iRet = PWEnums.PWRET_DISPLAY) then
                                             begin
-                                                if (PPrincipal.Memo1.Visible = False) then
+                                                if (TPrincipal.Memo1.Visible = False) then
                                                    begin
-                                                     PPrincipal.Memo1.Visible := True;
+                                                     TPrincipal.Memo1.Visible := True;
                                                      // Memo1.Lines.Clear;
                                                    end;
-                                                PPrincipal.Memo1.Lines.Add(vGetpszDisplay[0].szDspMsg);
-                                                PPrincipal.Memo1.Lines.Add(' ');
+                                                TPrincipal.Memo1.Lines.Add(vGetpszDisplay[0].szDspMsg);
+                                                TPrincipal.Memo1.Lines.Add(' ');
                                             end;
 
 
@@ -3026,8 +3147,8 @@ begin
 
                 Result := PWRET_OK;
 
-                PPrincipal.Label1.Visible := True;
-                PPrincipal.Label1.Caption := 'PROCESSANDO ...';
+                TPrincipal.Label1.Visible := True;
+                TPrincipal.Label1.Caption := 'PROCESSANDO ...';
                 Application.ProcessMessages;
 
 
@@ -3222,7 +3343,7 @@ function TPGWLib.PrintReturnDescription(iReturnCode:Integer; pszDspMsg:string):I
          if(iReturnCode <> PWEnums.PWRET_MOREDATA) and (iReturnCode <> PWEnums.PWRET_DISPLAY) and
              (iReturnCode <> PWEnums.PWRET_NOTHING) and (iReturnCode <> PWEnums.PWRET_FALLBACK) then
             begin
-              //PrintResultParams();
+              //intResultParams();
             end;
 
 
@@ -3300,11 +3421,11 @@ function TPGWLib.PrintReturnDescription(iReturnCode:Integer; pszDspMsg:string):I
         PWEnums.PWINFO_RCPTCHOLDER      : Result := 'PWINFO_RCPTCHOLDER';
         PWEnums.PWINFO_RCPTCHSHORT      : Result := 'PWINFO_RCPTCHSHORT';
         PWEnums.PWINFO_TRNORIGDATE      : Result := 'PWINFO_TRNORIGDATE';
+        PWEnums.PWINFO_TRNORIGTIME      : Result := 'PWINFO_TRNORIGTIME';
         PWEnums.PWINFO_TRNORIGNSU       : Result := 'PWINFO_TRNORIGNSU';
         PWEnums.PWINFO_TRNORIGAMNT      : Result := 'PWINFO_TRNORIGAMNT';
         PWEnums.PWINFO_TRNORIGAUTH      : Result := 'PWINFO_TRNORIGAUTH';
         PWEnums.PWINFO_TRNORIGREQNUM    : Result := 'PWINFO_TRNORIGREQNUM';
-        PWEnums.PWINFO_TRNORIGTIME      : Result := 'PWINFO_TRNORIGTIME';
         PWEnums.PWINFO_CARDFULLPAN      : Result := 'PWINFO_CARDFULLPAN';
         PWEnums.PWINFO_CARDEXPDATE      : Result := 'PWINFO_CARDEXPDATE';
         PWEnums.PWINFO_CARDNAMESTD      : Result := 'PWINFO_CARDNAMESTD';
