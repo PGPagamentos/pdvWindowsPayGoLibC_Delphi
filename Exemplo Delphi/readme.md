@@ -6,6 +6,7 @@
   - Confirmação
   - Cancelamento
   - Reimpressão
+  - Relatório das transações
 
 ### Pré-requisitos
   - Delphi 
