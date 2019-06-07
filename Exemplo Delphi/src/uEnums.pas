@@ -412,7 +412,6 @@ begin
     end;
 end;
 
-
 //=========================================================
 // Tipos de Vendas
 //=========================================================
@@ -507,8 +506,6 @@ case PWPPEVT  of
   PWPPEVT_KEYF3      :   Result := 'PWPPEVT_KEYF3';
   PWPPEVT_KEYF4      :   Result := 'PWPPEVT_KEYF4';
 
-
-
 end;
 
 
@@ -575,10 +572,7 @@ case PWRET  of
 end;
 
 
-
-
 end;
-
 
 
 

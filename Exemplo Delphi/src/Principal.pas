@@ -73,8 +73,6 @@ type
 
       ApertouESC:Boolean;
 
-
-
    Constructor Create;             // declaração do metodo construtor
 
    Destructor  Destroy; Override; // declaração do metodo destrutor
@@ -182,24 +180,20 @@ end;
 
 procedure TTelPrincipal.N7PWOPERADMIN1Click(Sender: TObject);
 begin
-
     // Transação Administrativa
-   // PGWLib.Admin();
+       PGWLib.Admin();
 
 end;
 
 procedure TTelPrincipal.PWiConfirmation1Click(Sender: TObject);
 begin
-
     //  Confirmação de Transação
    PGWLib.ConfirmaTrasacao();
-
 
 end;
 
 procedure TTelPrincipal.PWiInit1Click(Sender: TObject);
 begin
-
       // Inicializar Lib
       PGWLib.Init();
 
@@ -207,7 +201,6 @@ end;
 
 procedure TTelPrincipal.PWOPERINSTALL1Click(Sender: TObject);
 begin
-
     // Instalar Ponto de Captura
     PGWLib.Instalacao();
 

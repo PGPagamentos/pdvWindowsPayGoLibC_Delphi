@@ -11,7 +11,7 @@
 unit uPGWLib;
 
 interface
- 
+
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, System.StrUtils, system.AnsiStrings,
@@ -106,11 +106,8 @@ Type
    ConfirmaData = Array[0..0] of TConfirmaData;
 
 
-
-
   TPGWLib = class
   private
-  //private
     { private declarations }
   protected
     { protected declarations }
@@ -731,16 +728,6 @@ Type
 //=========================================================================================================*/
   function PW_iPPGetPINBlock(bKeyID:Byte; const pszWorkingKey:Char; bMinLen:Byte;
                                     bMaxLen:Byte; iToutSec:Int16; const pszPrompt:Char; pszData:Char):Int16; StdCall; External 'PGWebLib.dll';
-
-
-//  end;
-
-
-
-
-  //published
-    { published declarations }
-  //end;
 
 
 
