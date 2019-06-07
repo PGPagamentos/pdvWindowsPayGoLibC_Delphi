@@ -7,6 +7,7 @@
   - Cancelamento
   - Reimpressão
   - Relatório das transações
+  - Função Administrativa
 
 ### Pré-requisitos
   - Delphi 
