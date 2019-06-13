@@ -10,6 +10,7 @@
 //*****************************************************************************/
 unit uEnums;
 
+
 interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, System.StrUtils, system.AnsiStrings,
@@ -26,14 +27,14 @@ public
 
 
 
-
 const
 
 
 //==========================================================================================
 // Definição da versão do aplicativo
 //==========================================================================================
-  PGWEBLIBTEST_VERSION = '1.0.5';
+
+  PGWEBLIBTEST_VERSION = '1.0.7';
   PGWEBLIBTEST_AUTDEV  = 'AUTOMACAO DE SISTEMAS';
   PGWEBLIBTEST_AUTNAME = 'PAYGOTESTE';
   PGWEBLIBTEST_AUTCAP  = '15';
@@ -412,6 +413,7 @@ begin
     end;
 end;
 
+
 //=========================================================
 // Tipos de Vendas
 //=========================================================
@@ -506,12 +508,12 @@ case PWPPEVT  of
   PWPPEVT_KEYF3      :   Result := 'PWPPEVT_KEYF3';
   PWPPEVT_KEYF4      :   Result := 'PWPPEVT_KEYF4';
 
-end;
 
 
 end;
 
 
+end;
 
 
 
@@ -572,7 +574,10 @@ case PWRET  of
 end;
 
 
+
+
 end;
+
 
 
 

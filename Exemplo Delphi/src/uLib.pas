@@ -16,8 +16,6 @@ uses
   Vcl.Graphics,Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, System.Types, System.TypInfo;
 
 
-
-
 function GetAveCharSize(Canvas: TCanvas): TPoint;
 function vInputQuery(const ACaption, APrompt: string; var Value: string; x,y:integer): Boolean;
 function vInputBox(const ACaption, APrompt, ADefault: string; x,y: integer): string;
@@ -39,6 +37,9 @@ implementation
 
 
 
+
+
+
 //==========================================================
   {
     Auxliar para capturar tamanho dos caracteres de InputBox
@@ -53,6 +54,8 @@ begin
   for I := 0 to 25 do Buffer[I + 26] := Chr(I + Ord('a'));
   GetTextExtentPoint(Canvas.Handle, Buffer, 52, TSize(Result));
   Result.X := Result.X div 52;
+
+
 
 end;
 
@@ -126,7 +129,7 @@ begin
   ModalResult := mrCancel;
   Cancel := True;
   //Enabled := False;
-  Visible := False;       // Esconde Botão Cancelar
+  Visible := True;       // Esconde Botão Cancelar
   SetBounds(MulDiv(92, DialogUnits.X, 4), Edit.Top + Edit.Height + 15,
   ButtonWidth, ButtonHeight);
   Form.ClientHeight := Top + Height + 13;
@@ -136,7 +139,13 @@ if ShowModal = mrOk then
 begin
   Value := Edit.Text;
   Result := True;
-end;
+end
+else if ShowModal = mrCancel then
+   begin
+     value  := 'CANCELA';
+     Result := True;
+   end;
+
 finally
   Form.Free;
 end;
@@ -238,23 +247,24 @@ begin
   Width := MulDiv(164, DialogUnits.X, 4);
   MaxLength := 255;
 
-  if Tipo = 1 then          // Data com ano de 4 digitos
+  if Tipo = 1 then         // Data com ano de 4 digitos
   begin
     EditMask := '!99/99/0000;0;_';
   end;
 
-  if Tipo = 2 then         // Valor
+
+  if Tipo = 2 then        // Valor
   begin
       //EditMask :=  'R$ ###,###,##0.00;0;_';
     EditMask :=  'R$ 0,00;0;_';
   end;
 
-  if Tipo = 3 then        // Horário
+  if Tipo = 3 then       // Horário
   begin
     EditMask :=  '!90:00;0;_';
   end;
 
- if Tipo = 4 then        // Data com ano  de 2 digitos
+ if Tipo = 4 then         // Data com ano  de 2 digitos
   begin
     EditMask := '!99/99/00;0;_';
   end;
@@ -263,7 +273,6 @@ begin
   // PassWordChar := ´*´;
   Text := Value;
   SelectAll;
-
 end;
   ButtonTop := Edit.Top + Edit.Height + 15;
   ButtonWidth := MulDiv(50, DialogUnits.X, 4);
@@ -285,7 +294,7 @@ begin
   ModalResult := mrCancel;
   Cancel := True;
   //Enabled := False;
-  Visible := False;       // Esconde Botão Cancelar
+  Visible := True;       // Esconde Botão Cancelar
   SetBounds(MulDiv(92, DialogUnits.X, 4), Edit.Top + Edit.Height + 15,
   ButtonWidth, ButtonHeight);
   Form.ClientHeight := Top + Height + 13;
@@ -295,7 +304,12 @@ if ShowModal = mrOk then
 begin
   Value := Edit.Text;
   Result := True;
-end;
+end
+else if ShowModal = mrCancel then
+   begin
+     value  := 'CANCELA';
+     Result := True;
+   end;
 finally
   Form.Free;
 end;
@@ -314,6 +328,7 @@ begin
   Result := ADefault;
   vMInputQuery(ACaption, APrompt, Result, x,y, Tipo);
 end;
+
 
 
 end.
