@@ -8,7 +8,8 @@
   - Reimpressão
   - Relatório das transações
   - Função Administrativa
-
+  - Captura no PinPad
+  
 ### Pré-requisitos
   - Delphi 
   - Windows
