@@ -6,7 +6,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, System.StrUtils, system.AnsiStrings,
   Vcl.Graphics,Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, System.Types, System.TypInfo,uEnums,
-  Vcl.ExtCtrls, uLib, uPGWLib, Vcl.Menus, Vcl.Mask;
+  Vcl.ExtCtrls, uLib, uPGWLib, Vcl.Menus, Vcl.Mask, System.Actions, Vcl.ActnList;
 
 type
 
@@ -43,6 +43,10 @@ type
     N9: TMenuItem;
     Button1: TButton;
     Button2: TButton;
+    N10: TMenuItem;
+    N8TestaAutoAtendimento1: TMenuItem;
+    ActionList1: TActionList;
+    Abortar: TAction;
     procedure FormCreate(Sender: TObject);
     procedure FormKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure PWiInit1Click(Sender: TObject);
@@ -57,6 +61,10 @@ type
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure N8TestaAutoAtendimento1Click(Sender: TObject);
+    procedure AbortarExecute(Sender: TObject);
+    procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure FormKeyPress(Sender: TObject; var Key: Char);
 
 
 
@@ -72,6 +80,8 @@ type
       iKey:Integer;
 
       ApertouESC:Boolean;
+
+
 
    Constructor Create;             // declaração do metodo construtor
 
@@ -99,12 +109,19 @@ implementation
 
 {$R *.dfm}
 
-uses FCaptura;
+uses FCaptura, uLib02;
 
 //uses FrmCaptura;
 
 
 
+
+procedure TTelPrincipal.AbortarExecute(Sender: TObject);
+begin
+
+  ShowMessage('Abortar');
+
+end;
 
 procedure TTelPrincipal.Button1Click(Sender: TObject);
 begin
@@ -117,8 +134,7 @@ end;
 procedure TTelPrincipal.Button2Click(Sender: TObject);
 begin
 
-     // TelCaptura.ShowModal;
-
+    TelCaptura.ShowModal;
 
 end;
 
@@ -159,6 +175,24 @@ begin
 end;
 
 
+procedure TTelPrincipal.FormKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+
+     //ShowMessage('Teclou Algo ' + IntToStr(Key));
+     iKey := Key;
+
+end;
+
+procedure TTelPrincipal.FormKeyPress(Sender: TObject; var Key: Char);
+begin
+
+if Key = #27 then
+  begin
+    iKey := 1;
+  end;
+end;
+
 procedure TTelPrincipal.FormKeyUp(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
@@ -180,20 +214,32 @@ end;
 
 procedure TTelPrincipal.N7PWOPERADMIN1Click(Sender: TObject);
 begin
+
     // Transação Administrativa
-       PGWLib.Admin();
+    PGWLib.Admin();
+
+end;
+
+procedure TTelPrincipal.N8TestaAutoAtendimento1Click(Sender: TObject);
+begin
+
+  // Teste de Auto Atendimento
+//  PGWLib.TesteAA();
 
 end;
 
 procedure TTelPrincipal.PWiConfirmation1Click(Sender: TObject);
 begin
+
     //  Confirmação de Transação
    PGWLib.ConfirmaTrasacao();
+
 
 end;
 
 procedure TTelPrincipal.PWiInit1Click(Sender: TObject);
 begin
+
       // Inicializar Lib
       PGWLib.Init();
 
@@ -201,6 +247,7 @@ end;
 
 procedure TTelPrincipal.PWOPERINSTALL1Click(Sender: TObject);
 begin
+
     // Instalar Ponto de Captura
     PGWLib.Instalacao();
 
@@ -217,12 +264,33 @@ procedure TTelPrincipal.PWOPERSALEVenda1Click(Sender: TObject);
 begin
 
     // Transação de Venda
+
+     // Força Tecla
+     //keybd_event(VK_HOME, 0, 0, 0);
+
     PGWLib.venda();
 
 end;
 
 procedure TTelPrincipal.PWOPERSALEVOIDCancelamento1Click(Sender: TObject);
 begin
+
+        // Força Tecla
+        // keybd_event(VK_HOME, 0, 0, 0);
+        // keybd_event(VK_ESCAPE, 0, 0, 0);
+
+       // Verifica se Teclou <ESC>
+       //if GetAsyncKeyState(VK_ESCAPE)<>0 then
+       //   begin
+       //     keybd_event(VK_ESCAPE, 0, 0, 0);
+       //   end;
+
+
+      // if (iKey = 1) then
+      //     begin
+      //       ShowMessage('Abortar');
+      //     end;
+
 
       // Cancelamento
       PGWLib.Cancelamento();

@@ -28,6 +28,7 @@ function vMInputQuery(const ACaption, APrompt: string; var Value: string; x,y:in
 //function vMInputBox(const ACaption, APrompt, ADefault: string; x,y: integer): string;
 function vMInputBox(const ACaption, APrompt, ADefault: string; x,y: integer; Tipo:Integer): string;
 
+Function tirapontos(texto : String) : String;
 
 var
 x:Integer;
@@ -208,6 +209,7 @@ var
   Form: TForm;
   Prompt: TLabel;
   Edit:TMaskEdit;
+  aux:string;
   //Edit: TEdit;
   DialogUnits: TPoint;
   ButtonTop, ButtonWidth, ButtonHeight: Integer;
@@ -236,8 +238,6 @@ begin
   Constraints.MaxWidth := MulDiv(164, DialogUnits.X, 4);
   WordWrap := True;
 end;
-//Edit := TEdit.Create(Form);
-//Edit := TMasmasEdit.Create(Form);
 Edit := TMaskEdit.Create(Form);
 with Edit do
 begin
@@ -255,8 +255,7 @@ begin
 
   if Tipo = 2 then        // Valor
   begin
-      //EditMask :=  'R$ ###,###,##0.00;0;_';
-    EditMask :=  'R$ 0,00;0;_';
+      EditMask :=  'R$ 00,00;0;_';
   end;
 
   if Tipo = 3 then       // Horário
@@ -328,6 +327,31 @@ begin
   Result := ADefault;
   vMInputQuery(ACaption, APrompt, Result, x,y, Tipo);
 end;
+
+
+
+
+//================================================================
+
+
+
+Function tirapontos(texto : String) : String;
+Begin
+
+  While pos('-', Texto) <> 0 Do
+    delete(Texto,pos('-', Texto),1);
+
+  While pos('.', Texto) <> 0 Do
+    delete(Texto,pos('.', Texto),1);
+
+  While pos('/', Texto) <> 0 Do
+    delete(Texto,pos('/', Texto),1);
+
+  While pos(',', Texto) <> 0 Do
+    delete(Texto,pos(',', Texto),1);
+
+  Result := Texto;
+End;
 
 
 

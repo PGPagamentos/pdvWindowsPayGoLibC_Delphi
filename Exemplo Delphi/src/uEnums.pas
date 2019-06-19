@@ -34,7 +34,7 @@ const
 // Definição da versão do aplicativo
 //==========================================================================================
 
-  PGWEBLIBTEST_VERSION = '1.0.7';
+  PGWEBLIBTEST_VERSION = '1.0.8';
   PGWEBLIBTEST_AUTDEV  = 'AUTOMACAO DE SISTEMAS';
   PGWEBLIBTEST_AUTNAME = 'PAYGOTESTE';
   PGWEBLIBTEST_AUTCAP  = '15';
@@ -356,7 +356,6 @@ const
   Function E_PWFinancingTypes(PWFinancingTypes:integer):String;
   Function E_PWCNF(PWCNF:integer):String;
 
-
 End;
 
 
@@ -390,6 +389,8 @@ end;
 //========================================
 // **** Exemplo de uso das constantes ****
 //========================================
+
+
 
 
 
