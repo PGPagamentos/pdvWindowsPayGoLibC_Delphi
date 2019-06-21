@@ -9,6 +9,7 @@
   - Relatório das transações
   - Função Administrativa
   - Captura no PinPad
+  - Caso de uso não convencionais
   
 ### Pré-requisitos
   - Delphi 
