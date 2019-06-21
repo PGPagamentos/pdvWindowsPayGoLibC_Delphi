@@ -18,9 +18,7 @@ uses
   Vcl.Graphics,Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, System.Types, System.TypInfo,uEnums, uLib;
 
 
-
 Type
-
 
   //========================================================
   // Record que descreve cada membro da estrutura PW_GetData:
@@ -112,7 +110,6 @@ Type
 
 
 
-
   TPGWLib = class
   private
   //private
@@ -141,6 +138,8 @@ Type
     function iExecGetData(vstGetData:PW_GetData; iNumParam:Integer):Integer;
 
     function ConfirmaTrasacao:integer;
+
+    function ConfirmaTrasacaoAA:integer;
 
     function GetParamConfirma:Integer;
 
@@ -333,7 +332,6 @@ Type
   }
 //=========================================================================================================*/
   function PW_iGetResult(iInfo:Int16; var pszData: PSZ_GetData;   ulDataSize: UInt32):Int16; StdCall; External 'PGWebLib.dll';
-  //function PW_iGetResult(iInfo:Int16; var pszData: PSZ_GetData;   ulDataSize: UInt32):Int16; StdCall; External 'PGWebLib.dll';
 
 
 //=========================================================================================================
@@ -751,8 +749,6 @@ Type
 
 
 
-
-
 implementation
 
 
@@ -1058,36 +1054,50 @@ begin
             else
               begin
 
-
-                   // Guardar Informações para Confirmação e Mostrar no finanl da transação:
-
-                      {
-                      GetParamConfirma();
-
-                      ShowMessage('ReqNum: ' + gstConfirmData[0].szReqNum);
-                      ShowMessage('Extref: ' + gstConfirmData[0].szExtRef);
-                      ShowMessage('Locref: ' + gstConfirmData[0].szLocRef);
-                      ShowMessage('VirtMerch: ' + gstConfirmData[0].szVirtMerch);
-                      ShowMessage('AuthSyst: ' + gstConfirmData[0].szAuthSyst);
-                      }
-
-
-
                   if(iRet = PWEnums.PWRET_NOTHING) then
                     begin
                       I := I+1;
                       Continue;
-                    end
-                  else
-                    begin
-                      Break;
                     end;
+
+                  if (iRet = PWEnums.PWRET_FROMHOSTPENDTRN) then
+                      begin
+                          // Busca Parametros da Transação Pendente
+                          GetParamPendenteConfirma();
+                      end
+                  else
+                      begin
+                          // Busca Parametros da Transação Atual
+                          GetParamConfirma();
+                      end;
+
+
+
+                   Break;
+
 
               end;
 
 
         end;
 
+        // Busca necessidade de Confirmação.
+        iRet := PW_iGetResult(PWEnums.PWINFO_CNFREQ, vGetpszData, SizeOf(vGetpszData));
+        Volta := vGetpszData[0].pszDataxx;
+        if (Volta = '1') then
+           begin
+              MandaMemo(' PWINFO_CNFREQ = 1');
+              MandaMemo(' ');
+              MandaMemo('É Necessário Confirmar esta Transação !');
+              MandaMemo(' ');
+
+              // Metodo confirma a transação
+              ConfirmaTrasacao();
+
+           end;
+
+
+        PrintResultParams();
 
 end;
 
@@ -1202,7 +1212,7 @@ function TPGWLib.Cancelamento: Integer;
                         MandaMemo('Erro : ...' + IntToStr(iRet));
                         MandaMemo(' ');
 
-                        Exit;
+                        Break;
 
                      end;
 
@@ -1241,8 +1251,10 @@ function TPGWLib.Cancelamento: Integer;
               end;
 
 
+
         end;
 
+        PrintResultParams();
 
 
   end;
@@ -1459,18 +1471,6 @@ begin
             end;
 
 
-
-        {if (StrTagNFCe = 'CANCELA') then
-            begin
-              mRCancelado := 1;
-              Break;
-            end
-        else
-            begin
-              mRCancelado := 0;
-            end;
-        }
-
         try
            Menu := StrToInt(strTagNFCe);
         Except
@@ -1571,17 +1571,6 @@ begin
                 mRCancelado := 0;
               end;
 
-
-          {if (StrTagNFCe = 'CANCELA') then
-              begin
-                mRCancelado := 1;
-                Break;
-              end
-          else
-              begin
-                mRCancelado := 0;
-              end;
-          }
 
           try
              iRetErro := StrToInt(strTagNFCe);
@@ -1688,6 +1677,11 @@ begin
 
 
 
+
+    //PrintResultParams();
+
+
+
     iRetorno := PW_iGetResult(PWEnums.PWINFO_RESULTMSG, WretornaConf, SizeOf(WretornaConf));
     volta    := WretornaConf[0].pszDataxx;
 
@@ -1699,12 +1693,51 @@ begin
        begin
           MandaMemo('CONFIRMAÇÃO OK');
           MandaMemo(' ');
-          MandaMemo('PWRET_OK');
-          MandaMemo(' ');
        end;
 
 
 end;
+
+
+
+//=====================================================================================
+  {
+   Funcao     :  ConfirmaTransacaoAA
+                 Confirmação Automatica para AutoAtendimento
+
+   Descricao  : Esta função informa ao Pay&Go Web o status final da transação
+                em curso (confirmada ou desfeita).Confirmação de transação”
+ }
+//=====================================================================================*/
+function TPGWLib.ConfirmaTrasacaoAA: integer;
+var
+  ulStatus:Integer;  //
+  WretornaConf: PSZ_GetData;
+begin
+
+    ulStatus := PWEnums.PWCNF_CNF_AUTO;
+
+    // Executa Confirmação
+    iRet := PW_iConfirmation(ulStatus, gstConfirmData[0].szReqNum,gstConfirmData[0].szLocRef,gstConfirmData[0].szExtRef,gstConfirmData[0].szVirtMerch,gstConfirmData[0].szAuthSyst);
+
+    if (iRet <> PWEnums.PWRET_OK) then
+       begin
+         MandaMemo('Erro ao Confirmar Transação !!');
+         MandaMemo(' ');
+       end
+    else
+       begin
+          MandaMemo('CONFIRMAÇÃO OK');
+          MandaMemo(' ');
+       end;
+
+       //PrintResultParams();
+
+
+end;
+
+
+
 
 function TPGWLib.Count: Integer;
 begin
@@ -1936,6 +1969,7 @@ begin
         end;
 
 
+        PrintResultParams();
 
 
 end;
@@ -2087,14 +2121,12 @@ begin
 
 
                   // Retorna o recibo Via do Estabelecimento
-                  iRet := PW_iGetResult(PWEnums.PWINFO_RCPTMERCH , vGetpszErro, SizeOf(vGetpszData));
-                  Volta := vGetpszErro[0].pszDataxx;
-                  //ShowMessage('Retorno ' + Volta);
+                  //iRet := PW_iGetResult(PWEnums.PWINFO_RCPTMERCH , vGetpszErro, SizeOf(vGetpszData));
+                  //Volta := vGetpszErro[0].pszDataxx;
 
                   // Retorna o recibo Via do Cliente
-                  iRet := PW_iGetResult(PWEnums.PWINFO_RCPTCHOLDER , vGetpszErro, SizeOf(vGetpszData));
-                  Volta := vGetpszErro[0].pszDataxx;
-                  //ShowMessage('Retorno ' + Volta);
+                  //iRet := PW_iGetResult(PWEnums.PWINFO_RCPTCHOLDER , vGetpszErro, SizeOf(vGetpszData));
+                  //Volta := vGetpszErro[0].pszDataxx;
 
                   Break;
 
@@ -2231,7 +2263,7 @@ begin
 
 
         // Busca Todos os codigos e seus conteudos
-         //PrintResultParams();
+         PrintResultParams();
 
 
 
@@ -2407,9 +2439,6 @@ begin
                        Aguardando();
 
 
-
-
-
                 end;
 
                 // Aguarda o cartão do cliente
@@ -2470,7 +2499,9 @@ begin
 
                 end;
 
-
+                 // PWPPEVT_ICC        - Foi detectada a presença de um cartão com chip
+                 // PWPPEVT_MAGSTRIPE  - Foi passado um cartão magnético
+                 // PWPPEVT_CTLS       - Foi detectada a presença de um cartão sem contato
                 if((ulEvent = PWEnums.PWPPEVT_ICC) or (ulEvent = PWEnums.PWPPEVT_MAGSTRIPE)  or (ulEvent = PWEnums.PWPPEVT_CTLS)) then
                     begin
                        break;
@@ -2523,7 +2554,6 @@ begin
 
          // Inicializa a transação de venda
 
-
             iRet := PW_iNewTransac(PWEnums.PWOPER_SALE);
 
             if (iRet <> PWEnums.PWRET_OK) then
@@ -2575,7 +2605,20 @@ begin
                  iRetErro := iExecGetData(vGetdataArray,xNumParam);
                  if (iRetErro <> PWEnums.PWRET_OK) then
                     begin
-                      Exit;
+                        iRet := PW_iGetResult(PWEnums.PWINFO_CNFREQ, vGetpszData, SizeOf(vGetpszData));
+                        Volta := vGetpszData[0].pszDataxx;
+                        if (Volta = '1') then
+                           begin
+                              MandaMemo(' PWINFO_CNFREQ = 1');
+                              MandaMemo(' ');
+                              MandaMemo('Erro: ' + IntToStr(iRetErro) +  ' , É Necessário Confirmar esta Transação !');
+                              MandaMemo(' ');
+
+                              // Metodo confirma a transação
+                              ConfirmaTrasacao();
+                           end;
+
+                        Exit;
                     end
                  else
                     begin
@@ -2611,13 +2654,13 @@ begin
                      begin
                         MandaMemo(' PWINFO_CNFREQ = 1');
                         MandaMemo(' ');
-                        MandaMemo('É Necessário Confirmar esta Transação !');
+                        MandaMemo('Confirmando Transação ...');
                         MandaMemo(' ');
+
+                        // Metodo confirma a transação Automaticamente
+                        ConfirmaTrasacaoAA();
+
                      end;
-
-
-                     // Metodo confirma a transação
-                     ConfirmaTrasacao();
 
 
                   Break;
@@ -2629,6 +2672,7 @@ begin
         end;
 
 
+        PrintResultParams();
 
     gfAutoAtendimento := False;
 
@@ -2762,7 +2806,7 @@ begin
 
 
                       // Busca Todos os codigos e seus conteudos
-                         //PrintResultParams();
+                         PrintResultParams();
 
                       Exit;
                     end
@@ -2811,7 +2855,7 @@ begin
 
 
                   // Busca Todos os codigos e seus conteudos
-                     //PrintResultParams();
+                     PrintResultParams();
 
 
                   Break;
@@ -3051,7 +3095,7 @@ begin
                                                                    end;
 
 
-                                                                 Sleep(100);
+                                                                 Sleep(1000);
 
                                                                  Aguardando();
 
@@ -3859,7 +3903,7 @@ begin
 //=====================================================================================*/
 function TPGWLib.PrintResultParams: Integer;
 var
-  I:Int16;
+  I:Integer;
   Ir:Integer;
   iRet:Integer;
   szAux : PSZ_GetData;
@@ -3869,7 +3913,7 @@ begin
 
    I := 0;
 
-   while I < 32767 do   // MAXINT16
+   while I < 32524  do   // 2200 MAXINT16 32767
    begin
 
        iRet := PW_iGetResult( I, szAux, sizeof(szAux));
@@ -4152,7 +4196,7 @@ begin
         txt := 'Processando ';
       end;
 
-   if (Length(txt) > 60) then
+   if (Length(txt) > 40) then
        begin
           TPrincipal.Memo1.Lines.Add(' ');
           txt := 'Processando ';

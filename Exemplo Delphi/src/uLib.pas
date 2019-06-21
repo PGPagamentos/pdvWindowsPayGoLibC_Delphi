@@ -39,8 +39,6 @@ implementation
 
 
 
-
-
 //==========================================================
   {
     Auxliar para capturar tamanho dos caracteres de InputBox
@@ -55,8 +53,6 @@ begin
   for I := 0 to 25 do Buffer[I + 26] := Chr(I + Ord('a'));
   GetTextExtentPoint(Canvas.Handle, Buffer, 52, TSize(Result));
   Result.X := Result.X div 52;
-
-
 
 end;
 
@@ -171,8 +167,6 @@ function KeyIsDown(const Key: integer): boolean;
 begin
   Result := GetKeyState(Key) and 128 > 0;
 end;
-
-
 
 
 
@@ -331,8 +325,8 @@ end;
 
 
 
-//================================================================
 
+//================================================================
 
 
 Function tirapontos(texto : String) : String;

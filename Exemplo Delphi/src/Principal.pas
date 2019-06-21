@@ -95,12 +95,8 @@ type
 
 
 
-
-
-
 var
   TPrincipal: TTelPrincipal;
-
 
 
 
@@ -110,8 +106,6 @@ implementation
 {$R *.dfm}
 
 uses FCaptura, uLib02;
-
-//uses FrmCaptura;
 
 
 
@@ -224,7 +218,7 @@ procedure TTelPrincipal.N8TestaAutoAtendimento1Click(Sender: TObject);
 begin
 
   // Teste de Auto Atendimento
-//  PGWLib.TesteAA();
+     PGWLib.TesteAA();
 
 end;
 
@@ -265,31 +259,12 @@ begin
 
     // Transação de Venda
 
-     // Força Tecla
-     //keybd_event(VK_HOME, 0, 0, 0);
-
     PGWLib.venda();
 
 end;
 
 procedure TTelPrincipal.PWOPERSALEVOIDCancelamento1Click(Sender: TObject);
 begin
-
-        // Força Tecla
-        // keybd_event(VK_HOME, 0, 0, 0);
-        // keybd_event(VK_ESCAPE, 0, 0, 0);
-
-       // Verifica se Teclou <ESC>
-       //if GetAsyncKeyState(VK_ESCAPE)<>0 then
-       //   begin
-       //     keybd_event(VK_ESCAPE, 0, 0, 0);
-       //   end;
-
-
-      // if (iKey = 1) then
-      //     begin
-      //       ShowMessage('Abortar');
-      //     end;
 
 
       // Cancelamento
