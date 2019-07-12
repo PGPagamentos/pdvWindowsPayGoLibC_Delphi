@@ -27,3 +27,5 @@ Windows
 #### Observações
 
 1 O certificado "certificado.crt" na raiz do projeto é utilizado apenas no ambiente de testes, para ambiente produtivo utiliza-se outro arquivo.
+
+2 PGWebLib.DLL deve ser colocada na pasta de criação do Projeto  \Win32\Debug  
