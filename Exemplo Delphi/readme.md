@@ -31,8 +31,6 @@
   do Ponto de Captura. Para alterar estas configurações após isso, acionar a transação de CONFIGURAÇÃO,
   diretamente (PWOPER_CONFIG), ou através de uma transação ADMINISTRATIVA (PWOPER_ADMIN).
 
-- Quando solicitada a senha técnica, informar "314159".
-
 - A primeira comunicação com o PIN-pad pode demorar até 1 minuto, devido à coleta de todas as suas
   informações.
 
