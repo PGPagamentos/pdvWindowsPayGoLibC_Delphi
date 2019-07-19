@@ -18,17 +18,29 @@
     - código do Ponto de Captura (PdC)
     - PIN-Pad
 
-### Configurando no Windows
+#### Instruções de uso do exemplo Delphi
 
-### Como executar
-Windows
+- Antes de utilizar qualquer função da PGWebLib.dll o primirei passo é inicializa-la. 
+  Para fazer isso no exemplo Delphi, clique no menu de opções, em seguida na opção PW_iINit - Inicializar. 
+  Após isso será solicitado um diretório para gravar os logs de interação com a PGWebLib.dll.
 
+- A primeira transação a ser efetuada é a de INSTALAÇÃO. Esta pode ser acionada diretamente
+  PW_iNewTransac, em seguida PWOPER_INSTALL ou através de uma transação ADMINISTRATIVA (PWOPER_ADMIN).
+  
+- No decorrer da transação de instalação são solicitadas as configurações necessárias para operação
+  do Ponto de Captura. Para alterar estas configurações após isso, acionar a transação de CONFIGURAÇÃO,
+  diretamente (PWOPER_CONFIG), ou através de uma transação ADMINISTRATIVA (PWOPER_ADMIN).
 
-#### Observações
+- Quando solicitada a senha técnica, informar "314159".
 
-1 O certificado "certificado.crt" na raiz do projeto é utilizado apenas no ambiente de testes, para ambiente produtivo utiliza-se outro arquivo.
+- A primeira comunicação com o PIN-pad pode demorar até 1 minuto, devido à coleta de todas as suas
+  informações.
 
-2 PGWebLib.DLL e certificado.crt devem ser colocada na pasta de criação do Projeto  \Win32\Debug  para compilação do mesmo. (Estas pastas são criadas na primeira compilação, copiar os arquivos e compilar novamente)
-
-DICA:
-Na primeira vez que usar o Aplicativo, deve ser feito a Opão 1 inicializar e depois a opção de Instalação, caso aconteça algum problema antes de completar a Instalação e tenha que executa-la novamente, exclua a pasta onde indicou na inicialização e repita o processo.
+- Após realizar a transação de instalação com sucesso, um comprovante será gerado, listando os
+  sistemas de autorização configurados para o Ponto de Captura. A partir deste momento, outras transações
+  poderão ser realizadas (venda, recarga, etc.).
+  
+  ### Observações
+1) Caso ainda não possua os dados de configuração do ambiente de teste entre em contato com a PayGo pelos seguintes canais:
+   0800 737 2255 Opção 1
+   dev@paygo.com.br
