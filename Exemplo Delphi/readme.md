@@ -42,5 +42,6 @@
   
   ### Observações
 1) Caso ainda não possua os dados de configuração do ambiente de teste entre em contato com a PayGo pelos seguintes canais:
+
 0800 737 2255 Opção 1
 dev@paygo.com.br
