@@ -21,7 +21,7 @@
 #### Instruções de uso do exemplo Delphi
 
 - Antes de utilizar qualquer função da PGWebLib.dll o primirei passo é inicializa-la. 
-  Para fazer isso no exemplo Delphi, clique no menu de opções, em seguida na opção PW_iINit - Inicializar. 
+  Para fazer isso, clique no menu em seguida na opção PW_iINit - Inicializar. 
   Após isso será solicitado um diretório para gravar os logs de interação com a PGWebLib.dll.
 
 - A primeira transação a ser efetuada é a de INSTALAÇÃO. Esta pode ser acionada diretamente
