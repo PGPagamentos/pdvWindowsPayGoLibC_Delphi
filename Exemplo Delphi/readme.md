@@ -23,7 +23,7 @@
 - Antes de utilizar qualquer função da PGWebLib.dll o primireiro passo é inicializa-la. 
   Para fazer isso, clique no menu em seguida na opção PW_iINit - Inicializar. 
   Após isso será solicitado uma pasta para gravar os logs de interação com a PGWebLib.dll, use uma pasta 
-  existente ou informe "." para criar os Logs na Raiz do Projeto.
+  existente ou informe "." para criar na Raiz do Projeto.
 
 - A primeira transação a ser efetuada é a de INSTALAÇÃO. Esta pode ser acionada diretamente
   PW_iNewTransac, em seguida PWOPER_INSTALL ou através de uma transação ADMINISTRATIVA (PWOPER_ADMIN).
