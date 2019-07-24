@@ -32,7 +32,7 @@
   diretamente (PWOPER_CONFIG), ou através de uma transação ADMINISTRATIVA (PWOPER_ADMIN).
 
 - A primeira comunicação com o PIN-pad pode demorar até 1 minuto, devido à coleta de todas as suas
-  informações.
+  informações(mensagem="Atualizando Tabelas").
 
 - Após realizar a transação de instalação com sucesso, um comprovante será gerado, listando os
   sistemas de autorização configurados para o Ponto de Captura. A partir deste momento, outras transações
