@@ -34,7 +34,7 @@ const
 // Definição da versão do aplicativo
 //==========================================================================================
 
-  PGWEBLIBTEST_VERSION = '2.0.0';
+  PGWEBLIBTEST_VERSION = '2.0.1';
   PGWEBLIBTEST_AUTDEV  = 'AUTOMACAO DE SISTEMAS';
   PGWEBLIBTEST_AUTNAME = 'PAYGOTESTE';
   PGWEBLIBTEST_AUTCAP  = '15';
@@ -208,7 +208,7 @@ const
     PWINFO_PPINFO = '0x7F15';    // Informações do PIN-pad conectado, seguindo o padrão posição/informação abaixo: 001-020 / Nome do fabricante do PIN-pad. 021-039 / Modelo/versão do hardware. 040 / Se o PIN-pad suporta cartão com chip sem contato, este campo deve conter a letra “C”, caso contrário um espaço em branco. 041-060 / Versão do software básico/firmware. 061-064 / Versão da especificação, no formato “V.VV”. 065-080 / Versão da aplicação básica, no formato “VVV.VV AAMMDD” (com 3 espaços à direita). 081-100 / Número de série do PIN-pad (com espaços à direita)
     PWINFO_DUEAMNT = '0xBF06';   // Valor devido pelo usuário, considerando PWINFO_CURREXP, já deduzido em PWINFO_TOTAMNT
     PWINFO_READJUSTEDAMNT = '0xBF09'; // Valor total da transação reajustado, este campo será utilizado caso o autorizador, por alguma regra de negócio específica dele, resolva alterar o valor total que foi solicitado para a transação
-    PWINFO_CHOLDERNAME = '0x1F38';  // Nome do portador do cartão utilizado, o tamanho segue o mesmo padrão da tag 5F20 EMV.
+    PWINFO_CHOLDERNAME = '0x1F38';  // Nome do portador do cartão utilizado, o tamanho segue o padrão da tag 5F20 EMV.
     PWINFO_CARDNAMESTD = 196;   // Descrição do produto bandeira padrão relacionado ao BIN.
 
 
