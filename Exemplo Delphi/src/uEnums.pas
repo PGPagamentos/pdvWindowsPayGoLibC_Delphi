@@ -182,7 +182,6 @@ const
     PWINFO_CARDENTMODE = 192;   // Modo(s) de entrada do cartão: 1: digitado 2: tarja magnética 4: chip com contato 16: fallback de chip para tarja 32: chip sem contato simulando tarja (cliente informa tipo efetivamente utilizado) 64: chip sem contato EMV (cliente informa tipo efetivamente utilizado) 256: fallback de tarja para digitado
     PWINFO_CARDFULLPAN = 193;   // Número do cartão completo, para transação digitada. Este dado não pode ser recuperado pela função PW_iGetResult
     PWINFO_CARDEXPDATE = 194;   // Data de vencimento do cartão (formato “MMAA”).
-    PWINFO_CARDNAMESTD = 196;   // Descrição do produto bandeira padrão relacionado ao BIN.
     PWINFO_CARDPARCPAN = 200;   // Número do cartão, truncado ou mascarado
     PWINFO_CHOLDVERIF = 207;    // Verificação do portador, soma dos seguintes valores: “1”: Assinatura do portador em papel. “2”: Senha verificada off-line. “4”: Senha off-line bloqueada no decorrer desta transação. “8”: Senha verificada online
     PWINFO_AID = 216;           // Aplicação do cartão utilizada durante a transação
@@ -209,6 +208,8 @@ const
     PWINFO_PPINFO = '0x7F15';    // Informações do PIN-pad conectado, seguindo o padrão posição/informação abaixo: 001-020 / Nome do fabricante do PIN-pad. 021-039 / Modelo/versão do hardware. 040 / Se o PIN-pad suporta cartão com chip sem contato, este campo deve conter a letra “C”, caso contrário um espaço em branco. 041-060 / Versão do software básico/firmware. 061-064 / Versão da especificação, no formato “V.VV”. 065-080 / Versão da aplicação básica, no formato “VVV.VV AAMMDD” (com 3 espaços à direita). 081-100 / Número de série do PIN-pad (com espaços à direita)
     PWINFO_DUEAMNT = '0xBF06';   // Valor devido pelo usuário, considerando PWINFO_CURREXP, já deduzido em PWINFO_TOTAMNT
     PWINFO_READJUSTEDAMNT = '0xBF09'; // Valor total da transação reajustado, este campo será utilizado caso o autorizador, por alguma regra de negócio específica dele, resolva alterar o valor total que foi solicitado para a transação
+    PWINFO_CHOLDERNAME = '0x1F38';  // Nome do portador do cartão utilizado, o tamanho segue o mesmo padrão da tag 5F20 EMV.
+    PWINFO_CARDNAMESTD = 196;   // Descrição do produto bandeira padrão relacionado ao BIN.
 
 
   //===========================================================
